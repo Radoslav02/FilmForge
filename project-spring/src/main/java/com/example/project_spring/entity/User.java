@@ -24,5 +24,6 @@ public class User {
     private String role;
     private Date registrationDate;
     @Column(name = "last_login")
-    private LocalDateTime lastLogin;  // Dodaj ovo polje za praćenje poslednje prijave
+    private LocalDateTime lastLogin;
+    private String username;
 }

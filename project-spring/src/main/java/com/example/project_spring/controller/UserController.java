@@ -3,15 +3,19 @@ package com.example.project_spring.controller;
 import com.example.project_spring.dto.CategoryDTO;
 import com.example.project_spring.dto.LoginRequestDTO;
 import com.example.project_spring.dto.UserDTO;
+import com.example.project_spring.security.jwt.JwtTokenProvider;
 import com.example.project_spring.service.impl.CategoryServiceImpl;
 import com.example.project_spring.service.impl.UserServiceImpl;
 import lombok.AllArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor
 @RestController
@@ -19,44 +23,68 @@ import java.util.List;
 public class UserController {
 
     private final UserServiceImpl userService;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    @PostMapping
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
+    @PostMapping("/register")
+    public ResponseEntity<UserDTO> registerUser(@RequestBody UserDTO userDTO) {
         UserDTO savedUser = userService.createUser(userDTO);
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable("id") Long userId) {
-        UserDTO userDto = userService.getUserById(userId);
-        return ResponseEntity.ok(userDto);
-    }
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, Object>> loginUser(@RequestBody LoginRequestDTO loginRequest) {
+        // Log ulaznih podataka
+        System.out.println("Login request received: email=" + loginRequest.getEmail() + ", password=" + loginRequest.getPassword());
 
-    @GetMapping
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
-        List<UserDTO> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable("id") Long userId, @RequestBody UserDTO updatedUser) {
-        UserDTO updatedUserDTO = userService.updateUser(userId, updatedUser);
-        return ResponseEntity.ok(updatedUserDTO);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable("id") Long userId) {
-        userService.deleteUser(userId);
-        return ResponseEntity.ok("User successfully deleted");
-    }
-
-    @PostMapping("/authenticate")
-    public ResponseEntity<UserDTO> authenticateUser(@RequestBody LoginRequestDTO loginRequest) {
         try {
             UserDTO authenticatedUser = userService.authenticateUser(loginRequest.getEmail(), loginRequest.getPassword());
-            return ResponseEntity.ok(authenticatedUser);
+            String token = jwtTokenProvider.createToken(authenticatedUser.getEmail(), List.of("USER"));
+
+            // Log uspešne autentifikacije
+            System.out.println("Authentication successful for email: " + authenticatedUser.getEmail());
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("token", token);
+            response.put("email", authenticatedUser.getEmail());
+            response.put("firstName", authenticatedUser.getFirstName());
+            response.put("lastName", authenticatedUser.getLastName());
+            response.put("id", authenticatedUser.getId());
+            response.put("isAdmin", authenticatedUser.getRole());
+
+            return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            // Log greške
+            System.err.println("Authentication failed: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+
+
+    @GetMapping("/profile")
+    public ResponseEntity<UserDTO> getUserProfile(Authentication authentication) {
+        String email = authentication.getName();
+        UserDTO user = userService.getUserByEmail(email);
+        return ResponseEntity.ok(user);
+    }
+
+    @PutMapping("/editProfile")
+    public ResponseEntity<UserDTO> updateUserProfile(@RequestBody UserDTO updatedUser, Authentication authentication) {
+        try {
+            // Log podataka koje je frontend poslao
+            System.out.println("Received user update payload: " + updatedUser);
+
+            String email = authentication.getName(); // Dohvati email iz JWT tokena
+            UserDTO updatedUserProfile = userService.updateUserByEmail(email, updatedUser);
+
+            // Log uspešne izmene
+            System.out.println("Successfully updated user profile: " + updatedUserProfile);
+
+            return ResponseEntity.ok(updatedUserProfile);
+        } catch (RuntimeException e) {
+            // Log greške
+            System.err.println("Error updating profile: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
 

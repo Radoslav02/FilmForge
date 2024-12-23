@@ -17,4 +17,7 @@ public interface UserService {
     void deleteUser(Long userID);
 
     public UserDTO authenticateUser(String email, String password);
+
+    public UserDTO getUserByEmail(String email);
+    public UserDTO updateUserByEmail(String email, UserDTO updatedUser);
 }

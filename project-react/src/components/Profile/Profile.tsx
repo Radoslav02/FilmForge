@@ -30,6 +30,8 @@ export default function Profile() {
     setError(null);
   
     try {
+      const token = localStorage.getItem("jwtToken");
+      console.log("JWT token:", token);
       const updatedUserPayload: any = {
         email: editedUser.email,
         firstName: editedUser.firstName,
@@ -40,30 +42,37 @@ export default function Profile() {
         updatedUserPayload.password = password;
       }
   
-      const response = await fetch(`http://localhost:8080/api/users/${user?.id}`, {
+      console.log("Payload being sent to backend:", updatedUserPayload);
+  
+      const response = await fetch("http://localhost:8080/api/users/editProfile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(updatedUserPayload),
       });
   
+      console.log("Response from backend:", response);
+  
+      if (!response.ok) {
+        throw new Error("Failed to update profile");
+      }
+  
       const updatedUser = await response.json();
-  
       dispatch(login(updatedUser));
-  
-      setEditedUser({
-        ...updatedUser,
-        password: "", 
-      });
       setIsEditing(false);
-      setPassword(""); 
+      setPassword("");
     } catch (err: any) {
-      setError(err.message || "An error occurred while saving.");
+      console.error("Error during save:", err);
+      setError(err.message || "An error occurred.");
     } finally {
       setIsLoading(false);
     }
   };
+  
+  
+  
   
   if (!user) {
     return <div className="profile-page-container">Korisnik nije prijavljen.</div>;

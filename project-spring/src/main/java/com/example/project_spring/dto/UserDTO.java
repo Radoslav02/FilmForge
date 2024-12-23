@@ -21,4 +21,5 @@ public class UserDTO {
     private String role;
     private Date registrationDate;
     private LocalDateTime lastLogin;
+    private String username;
 }

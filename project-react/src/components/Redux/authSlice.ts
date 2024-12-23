@@ -2,13 +2,12 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 // Define an interface for the User object to include additional fields
 interface User {
-  id: string; 
+  id: string;
   email: string;
   isAdmin: boolean;
   firstName?: string;
   lastName?: string;
 }
-
 
 // Update the UserState interface to reflect the new User structure
 interface UserState {

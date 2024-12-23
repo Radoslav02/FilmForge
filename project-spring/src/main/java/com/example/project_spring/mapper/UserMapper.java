@@ -13,7 +13,8 @@ public class UserMapper {
             user.getPassword(),
             user.getRole(),
             user.getRegistrationDate(),
-            user.getLastLogin()
+            user.getLastLogin(),
+            user.getUsername()
         );
     }
 
@@ -26,7 +27,8 @@ public class UserMapper {
                 userDTO.getPassword(),
                 userDTO.getRole(),
                 userDTO.getRegistrationDate(),
-                userDTO.getLastLogin()
+                userDTO.getLastLogin(),
+                userDTO.getUsername()
         );
     }
 }

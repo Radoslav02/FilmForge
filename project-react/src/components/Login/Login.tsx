@@ -5,36 +5,71 @@ import { useDispatch } from "react-redux";
 import { login } from "../Redux/authSlice";
 
 export default function Login() {
-   
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-    const handleLogin = async () => {
-      try{
-        const response = await fetch("http://localhost:8080/api/users/authenticate", {
-          method : "POST",
-          headers: {
-            "Content-Type":"application/json",
-          },
-          body:JSON.stringify({email, password}),
-        });
-        if(!response.ok){
-          throw new Error("Invalid email or password");
-        }
+  const handleLogin = async () => {
+    try {
+      // Logovanje unetih podataka pre slanja na backend
+      console.log("Login data being sent:", { email, password });
 
-        const userData = await response.json();
+      const response = await fetch("http://localhost:8080/api/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-        dispatch(login(userData));
+      // Logovanje HTTP statusa odgovora
+      console.log("Response status:", response.status);
 
-        navigate("/profile");
-      }catch(error){
-        console.error("Login failed: ", error);
-        alert("Invalid email or password");
+      if (!response.ok) {
+        throw new Error("Invalid email or password");
       }
-    };
 
+      const {
+        token,
+        email: responseEmail,
+        firstName,
+        lastName,
+        id,
+        isAdmin,
+      } = await response.json();
+
+      // Logovanje odgovora sa servera
+      console.log("Response data:", {
+        token,
+        email: responseEmail,
+        firstName,
+        lastName,
+        id,
+        isAdmin,
+      });
+
+      // Čuvanje tokena u localStorage
+      localStorage.setItem("jwtToken", token);
+
+      // Ažuriranje Redux store-a sa korisničkim podacima
+      dispatch(
+        login({
+          id,
+          email: responseEmail, // Koristi email iz odgovora
+          isAdmin,
+          firstName,
+          lastName,
+        })
+      );
+
+      navigate("/profile");
+    } catch (error: any) {
+      // Logovanje greške
+      console.error("Login failed:", error.message);
+      alert(error.message);
+    }
+  };
 
   return (
     <div className="login-page-container">
@@ -59,13 +94,13 @@ export default function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="login-input"
-            type="text"
+            type="password"
           />
         </div>
 
         <div className="register-form">
           <span onClick={() => navigate("/register")}>
-            <p className="dont">Dont have account?</p>
+            <p className="dont">Don't have an account?</p>
             <p>Create one</p>
           </span>
         </div>

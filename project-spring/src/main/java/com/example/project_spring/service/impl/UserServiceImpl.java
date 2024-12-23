@@ -14,27 +14,35 @@ import com.example.project_spring.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
+    private final PasswordEncoder passwordEncoder;
     private UserRepository userRepository;
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
-
         User user = UserMapper.maptoUser(userDTO);
-        User savedUser = userRepository.save(user);
 
+        // Šifrujte lozinku pre čuvanja
+        user.setRole("user");
+        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+
+        User savedUser = userRepository.save(user);
         return UserMapper.maptoUserDTO(savedUser);
     }
 
@@ -81,26 +89,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO authenticateUser(String email, String password) {
-        List<User> users = userRepository.findAll();
-        User wantedUser = null;
+        // Find user by email
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
-        for (User user : users) {
-            if (user.getEmail().equals(email) && user.getPassword().equals(password)) {
-                wantedUser = user;
-                break;
-            }
+        // Validate password
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new ResourceNotFoundException("Wrong password");
         }
 
-        if (wantedUser == null) {
-            throw new RuntimeException("Invalid email or password");
-        }
+        // Update the last login time
+        user.setLastLogin(LocalDateTime.now());
+        userRepository.save(user);
 
-        // Ažuriraj poslednju prijavu korisnika
-        wantedUser.setLastLogin(LocalDateTime.now());
-        userRepository.save(wantedUser);
-
-        return UserMapper.maptoUserDTO(wantedUser);
+        // Map user entity to DTO
+        return UserMapper.maptoUserDTO(user);
     }
+
 
     // Zakazano svakog dana u ponoć
     @Scheduled(cron = "0 0 0 * * ?")
@@ -112,4 +117,37 @@ public class UserServiceImpl implements UserService {
             userRepository.delete(user);
         }
     }
+
+    @Override
+    public UserDTO getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + email));
+
+        return UserMapper.maptoUserDTO(user);
+    }
+
+    @Override
+    public UserDTO updateUserByEmail(String email, UserDTO updatedUser) {
+        User existingUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + email));
+
+
+        // Ažuriraj osnovne podatke
+        existingUser.setFirstName(updatedUser.getFirstName());
+        existingUser.setLastName(updatedUser.getLastName());
+
+        // Ako postoji nova lozinka, šifrujte je pre čuvanja
+        if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
+            existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+        }
+
+        User updatedUserObj = userRepository.save(existingUser);
+        return UserMapper.maptoUserDTO(updatedUserObj);
+    }
+
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+
 }
