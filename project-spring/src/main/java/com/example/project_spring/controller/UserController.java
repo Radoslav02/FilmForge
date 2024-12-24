@@ -31,6 +31,16 @@ public class UserController {
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
 
+    @PostMapping("/verify-email")
+    public ResponseEntity<String> verifyEmail(@RequestParam String token) {
+        boolean isVerified = userService.verifyUserEmail(token);
+        if (isVerified) {
+            return ResponseEntity.ok("Email successfully verified.");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid token.");
+        }
+    }
+
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> loginUser(@RequestBody LoginRequestDTO loginRequest) {
         // Log ulaznih podataka

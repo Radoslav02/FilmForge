@@ -21,9 +21,17 @@ public class User {
     private String lastName;
     private String email;
     private String password;
+    private String confirmationPassword;
+    private String city;
+    private String street;
+    private String number;
+    private String username;
+    private String country;
     private String role;
-    private Date registrationDate;
+    private LocalDateTime registrationDate;
     @Column(name = "last_login")
     private LocalDateTime lastLogin;
-    private String username;
+    //E-mail verification
+    private String verificationToken;
+    private boolean isEnabled;
 }

@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 public class JwtProperties {
     private String secretKey = "DemoApiCoreSecretKeyThatIsLongEnoughToPassValidation";
 
-
     //validity in milliseconds
     private long validityInMs = 3600000 * 12; // 12h
 

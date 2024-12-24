@@ -55,8 +55,9 @@ public class WebSecurityConfig {
                         auth
                                 .requestMatchers("/", "/api/users/login").permitAll()
                                 .requestMatchers("/", "/api/users/register").permitAll()
-                                .requestMatchers("/api/users/editProfile").permitAll()
+                                .requestMatchers("/api/users/editProfile").authenticated()
                                 .requestMatchers("/api/users/profile").permitAll()
+                                .requestMatchers("/api/users/verify-email").permitAll()
                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                                 .anyRequest().authenticated()
                 )

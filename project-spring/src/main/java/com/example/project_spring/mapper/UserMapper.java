@@ -11,10 +11,17 @@ public class UserMapper {
             user.getLastName(),
             user.getEmail(),
             user.getPassword(),
+            user.getConfirmationPassword(),
+            user.getCity(),
+            user.getStreet(),
+            user.getNumber(),
+            user.getUsername(),
+            user.getCountry(),
             user.getRole(),
             user.getRegistrationDate(),
             user.getLastLogin(),
-            user.getUsername()
+            user.getVerificationToken(),
+            user.isEnabled()
         );
     }
 
@@ -25,10 +32,17 @@ public class UserMapper {
                 userDTO.getLastName(),
                 userDTO.getEmail(),
                 userDTO.getPassword(),
+                userDTO.getConfirmationPassword(),
+                userDTO.getCity(),
+                userDTO.getStreet(),
+                userDTO.getNumber(),
+                userDTO.getUsername(),
+                userDTO.getCountry(),
                 userDTO.getRole(),
                 userDTO.getRegistrationDate(),
                 userDTO.getLastLogin(),
-                userDTO.getUsername()
+                userDTO.getVerificationToken(),
+                userDTO.isEnabled()
         );
     }
 }

@@ -13,6 +13,7 @@ import com.example.project_spring.repository.UserRepository;
 import com.example.project_spring.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,11 +21,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+import org.springframework.mail.javamail.JavaMailSender;
 
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,13 +40,42 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO createUser(UserDTO userDTO) {
         User user = UserMapper.maptoUser(userDTO);
+        LocalDateTime now = LocalDateTime.now();
 
-        // Šifrujte lozinku pre čuvanja
+        // Generate verification token
+        String token = UUID.randomUUID().toString();
+        user.setVerificationToken(token);
+        user.setEnabled(false);  // User is not activated until email verification
+
         user.setRole("user");
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        user.setConfirmationPassword(passwordEncoder.encode(userDTO.getConfirmationPassword()));
+        user.setRegistrationDate(now);
 
+        // Save the user to the database
         User savedUser = userRepository.save(user);
-        return UserMapper.maptoUserDTO(savedUser);
+
+        // Convert saved user back to DTO
+        UserDTO savedUserDTO = UserMapper.maptoUserDTO(savedUser);
+
+        // Set the verification token in the DTO to send it back to the frontend
+        savedUserDTO.setVerificationToken(token);  // Add token to DTO
+
+        return savedUserDTO;
+    }
+
+    public boolean verifyUserEmail(String token) {
+        Optional<User> user = userRepository.findByVerificationToken(token);
+
+        if (user.isPresent()) {
+            User verifiedUser = user.get();
+            verifiedUser.setEnabled(true);
+            verifiedUser.setVerificationToken(null);
+            userRepository.save(verifiedUser);
+            return true;
+        }
+
+        return false;
     }
 
     @Override
@@ -59,26 +91,6 @@ public class UserServiceImpl implements UserService {
         List<User> users = userRepository.findAll();
         return users.stream().map((user) -> UserMapper.maptoUserDTO(user)).collect(Collectors.toList());
     }
-
-    @Override
-    public UserDTO updateUser(Long userID, UserDTO updatedUser) {
-        User user = userRepository.findById(userID)
-                .orElseThrow(() -> new ResourceNotFoundException("User with given id doesn't exist: " + userID));
-
-        user.setEmail(updatedUser.getEmail());
-        user.setFirstName(updatedUser.getFirstName());
-        user.setLastName(updatedUser.getLastName());
-
-        // Only update the password if it is not null or empty
-        if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
-            user.setPassword(updatedUser.getPassword());
-        }
-
-        User updatedUserObj = userRepository.save(user);
-
-        return UserMapper.maptoUserDTO(updatedUserObj);
-    }
-
 
     @Override
     public void deleteUser(Long userID) {
@@ -106,18 +118,6 @@ public class UserServiceImpl implements UserService {
         return UserMapper.maptoUserDTO(user);
     }
 
-
-    // Zakazano svakog dana u ponoć
-    @Scheduled(cron = "0 0 0 * * ?")
-    public void deleteInactiveUsers() {
-        LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
-        List<User> inactiveUsers = userRepository.findByLastLoginBefore(sevenDaysAgo);
-
-        for (User user : inactiveUsers) {
-            userRepository.delete(user);
-        }
-    }
-
     @Override
     public UserDTO getUserByEmail(String email) {
         User user = userRepository.findByEmail(email)
@@ -131,7 +131,6 @@ public class UserServiceImpl implements UserService {
         User existingUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + email));
 
-
         // Ažuriraj osnovne podatke
         existingUser.setFirstName(updatedUser.getFirstName());
         existingUser.setLastName(updatedUser.getLastName());
@@ -144,10 +143,5 @@ public class UserServiceImpl implements UserService {
         User updatedUserObj = userRepository.save(existingUser);
         return UserMapper.maptoUserDTO(updatedUserObj);
     }
-
-    public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
-    }
-
-
 }
+

@@ -18,8 +18,16 @@ public class UserDTO {
     private String lastName;
     private String email;
     private String password;
-    private String role;
-    private Date registrationDate;
-    private LocalDateTime lastLogin;
+    private String confirmationPassword;
+    private String city;
+    private String street;
+    private String number;
     private String username;
+    private String country;
+    private String role;
+    private LocalDateTime registrationDate;
+    private LocalDateTime lastLogin;
+    //E-mail verification
+    private String verificationToken;
+    private boolean isEnabled;
 }
