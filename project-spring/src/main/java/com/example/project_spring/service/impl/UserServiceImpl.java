@@ -1,30 +1,24 @@
 package com.example.project_spring.service.impl;
 
-import com.example.project_spring.dto.CategoryDTO;
-import com.example.project_spring.dto.LoginRequestDTO;
+
 import com.example.project_spring.dto.UserDTO;
-import com.example.project_spring.entity.Category;
+
 import com.example.project_spring.entity.User;
 import com.example.project_spring.exception.ResourceNotFoundException;
-import com.example.project_spring.mapper.CategoryMapper;
+
 import com.example.project_spring.mapper.UserMapper;
-import com.example.project_spring.repository.CategoryRepository;
+
 import com.example.project_spring.repository.UserRepository;
 import com.example.project_spring.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.scheduling.annotation.Scheduled;
+
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.servlet.resource.NoResourceFoundException;
-import org.springframework.mail.javamail.JavaMailSender;
+
 
 import java.time.LocalDateTime;
-import java.util.Date;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -37,36 +31,25 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private UserRepository userRepository;
 
-    @Override
     public UserDTO createUser(UserDTO userDTO) {
+        if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already exists");
+        }
+
+        if (userRepository.findByUsername(userDTO.getUsername()).isPresent()) {
+            throw new RuntimeException("Username already exists");
+        }
+
         User user = UserMapper.maptoUser(userDTO);
-        LocalDateTime now = LocalDateTime.now();
-
-        // Generate verification token
-        String token = UUID.randomUUID().toString();
-        user.setVerificationToken(token);
-        user.setEnabled(false);  // User is not activated until email verification
-
-        user.setRole("user");
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        user.setConfirmationPassword(passwordEncoder.encode(userDTO.getConfirmationPassword()));
-        user.setRegistrationDate(now);
-
-        // Save the user to the database
+        user.setEnabled(false);
+        user.setVerificationToken(UUID.randomUUID().toString());
         User savedUser = userRepository.save(user);
-
-        // Convert saved user back to DTO
-        UserDTO savedUserDTO = UserMapper.maptoUserDTO(savedUser);
-
-        // Set the verification token in the DTO to send it back to the frontend
-        savedUserDTO.setVerificationToken(token);  // Add token to DTO
-
-        return savedUserDTO;
+        return UserMapper.maptoUserDTO(savedUser);
     }
 
     public boolean verifyUserEmail(String token) {
         Optional<User> user = userRepository.findByVerificationToken(token);
-
         if (user.isPresent()) {
             User verifiedUser = user.get();
             verifiedUser.setEnabled(true);
@@ -74,9 +57,10 @@ public class UserServiceImpl implements UserService {
             userRepository.save(verifiedUser);
             return true;
         }
-
         return false;
     }
+
+
 
     @Override
     public UserDTO getUserById(Long userID) {
@@ -108,6 +92,10 @@ public class UserServiceImpl implements UserService {
         // Validate password
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new ResourceNotFoundException("Wrong password");
+        }
+
+        if (!user.isEnabled()) {
+            throw new RuntimeException("User account is not activated");
         }
 
         // Update the last login time

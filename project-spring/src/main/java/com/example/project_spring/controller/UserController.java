@@ -31,8 +31,12 @@ public class UserController {
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
 
-    @PostMapping("/verify-email")
+    @GetMapping("/verify-email")
     public ResponseEntity<String> verifyEmail(@RequestParam String token) {
+        if (token == null || token.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid or missing token.");
+        }
+
         boolean isVerified = userService.verifyUserEmail(token);
         if (isVerified) {
             return ResponseEntity.ok("Email successfully verified.");
@@ -41,18 +45,31 @@ public class UserController {
         }
     }
 
+
+
+
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> loginUser(@RequestBody LoginRequestDTO loginRequest) {
         // Log ulaznih podataka
         System.out.println("Login request received: email=" + loginRequest.getEmail() + ", password=" + loginRequest.getPassword());
 
         try {
+            // Autentifikacija korisnika
             UserDTO authenticatedUser = userService.authenticateUser(loginRequest.getEmail(), loginRequest.getPassword());
+
+            // Provera da li je korisnik enabled
+            if (!authenticatedUser.isEnabled()) {
+                System.err.println("Login failed: User account is disabled.");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "User account is disabled."));
+            }
+
+            // Generisanje tokena za autentifikovanog korisnika
             String token = jwtTokenProvider.createToken(authenticatedUser.getEmail(), List.of("USER"));
 
             // Log uspešne autentifikacije
             System.out.println("Authentication successful for email: " + authenticatedUser.getEmail());
 
+            // Formiranje odgovora
             Map<String, Object> response = new HashMap<>();
             response.put("token", token);
             response.put("email", authenticatedUser.getEmail());
@@ -68,8 +85,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", e.getMessage()));
         }
     }
-
-
 
     @GetMapping("/profile")
     public ResponseEntity<UserDTO> getUserProfile(Authentication authentication) {
@@ -97,6 +112,4 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
-
-
 }

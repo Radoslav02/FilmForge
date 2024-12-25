@@ -24,7 +24,7 @@ export default function Register() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (formData.password !== formData.confirmationPassword) {
@@ -40,32 +40,32 @@ export default function Register() {
         },
         body: JSON.stringify(formData),
       });
-      
+
       if (response.ok) {
         const data = await response.json();
-        const verificationToken = data.verificationToken;  // Now you can access the token
-      
+        const verificationToken = data.verificationToken;
+
         if (verificationToken) {
           emailjs
             .send(
-              "service_ddp52dz", 
-              "template_7xzzrqh", 
+              "service_ddp52dz",
+              "template_7xzzrqh",
               {
                 email: formData.email,
                 token: verificationToken,
               },
               "1Ub-jNsHy7L9Iiri8"
             )
-            .then(
-              () => {
-                alert("Registration successful. Please check your email to verify your account.");
-                navigate(`/verify-email?token=${verificationToken}`);
-              },
-              (error) => {
-                console.error("Error sending verification email:", error);
-                alert("Failed to send verification email.");
-              }
-            );
+            .then(() => {
+              alert(
+                "Registration successful. Please check your email to verify your account."
+              );
+              navigate("/check-email");
+            })
+            .catch((error) => {
+              console.error("Error sending verification email:", error);
+              alert("Failed to send verification email.");
+            });
         } else {
           alert("Verification token missing.");
         }

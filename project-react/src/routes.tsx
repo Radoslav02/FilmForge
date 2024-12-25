@@ -6,6 +6,7 @@ import Register from "./components/Register/Register";
 import Profile from "./components/Profile/Profile";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 import VerifyEmail from "./components/MailVerification/MailVerification";
+import CheckEmail from "./components/CheckMail/CheckMail";
 
 export const router = createHashRouter([
   {
@@ -35,6 +36,10 @@ export const router = createHashRouter([
       {
         path: "/verify-email",
         element: <VerifyEmail />,
+      },
+      {
+        path: "/check-email",
+        element: <CheckEmail />,
       },
     ],
   },
