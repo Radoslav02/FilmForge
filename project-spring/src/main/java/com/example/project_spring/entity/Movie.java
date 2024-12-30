@@ -30,7 +30,8 @@ public class Movie {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private User user; // This is the association with the logged-in user
+
 
     private String description;
 
@@ -46,7 +47,7 @@ public class Movie {
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Grade> grades = new ArrayList<>();
 
-    // Metod za izračunavanje prosečne ocene
+    // Method to calculate average grade
     public double getAverageGrade() {
         if (grades.isEmpty()) {
             return 0.0;

@@ -21,7 +21,8 @@ public class UserMapper {
             user.getRegistrationDate(),
             user.getLastLogin(),
             user.getVerificationToken(),
-            user.isEnabled()
+            user.isEnabled(),
+            user.getMoviesAdded()
         );
     }
 
@@ -42,7 +43,8 @@ public class UserMapper {
                 userDTO.getRegistrationDate(),
                 userDTO.getLastLogin(),
                 userDTO.getVerificationToken(),
-                userDTO.isEnabled()
+                userDTO.isEnabled(),
+                userDTO.getMoviesAdded()
         );
     }
 }

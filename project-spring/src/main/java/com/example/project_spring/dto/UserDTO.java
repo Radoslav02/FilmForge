@@ -1,12 +1,15 @@
 package com.example.project_spring.dto;
 
+import com.example.project_spring.entity.Movie;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -30,4 +33,5 @@ public class UserDTO {
     //E-mail verification
     private String verificationToken;
     private boolean isEnabled;
+    private List<Movie> moviesAdded = new ArrayList<>();
 }

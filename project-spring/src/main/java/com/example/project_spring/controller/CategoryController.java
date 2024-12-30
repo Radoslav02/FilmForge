@@ -32,7 +32,7 @@ public class CategoryController {
     }
 
     //Build Get All Category REST API
-    @GetMapping
+    @GetMapping("/allCategories")
     public ResponseEntity<List<CategoryDTO>> getAllCategories(){
         List<CategoryDTO> categories = categoryService.getAllCategories();
         return ResponseEntity.ok(categories);

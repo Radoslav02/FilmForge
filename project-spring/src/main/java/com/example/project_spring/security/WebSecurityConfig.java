@@ -18,6 +18,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -58,6 +60,7 @@ public class WebSecurityConfig {
                                 .requestMatchers("/api/users/editProfile").authenticated()
                                 .requestMatchers("/api/users/profile").permitAll()
                                 .requestMatchers("/api/users/verify-email").permitAll()
+                                .requestMatchers("/api/categories/allCategories").permitAll()
                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                                 .anyRequest().authenticated()
                 )
@@ -79,7 +82,6 @@ public class WebSecurityConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // Dozvoljava sve rute
                         .allowedOrigins("http://localhost:5173")
-                        .allowedOrigins("http://localhost:5174")// Dozvoljava zahteve sa ovog URL-a
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Dozvoljava navedene metode
                         .allowedHeaders("*") // Dozvoljava sve zaglavlja
                         .allowCredentials(true); // Dozvoljava slanje kolačića
@@ -87,5 +89,11 @@ public class WebSecurityConfig {
         };
     }
 
-
+    @Configuration
+    public class MultipartConfig {
+        @Bean
+        public MultipartResolver multipartResolver() {
+            return new StandardServletMultipartResolver();
+        }
+    }
 }

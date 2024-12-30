@@ -8,27 +8,26 @@ import com.example.project_spring.entity.User;
 
 public class MovieMapper {
 
-    public static Movie mapToMovie(MovieDTO movieDTO, Category category, User user) {
+    public static Movie mapToMovie(MovieDTO movieDTO, User user, Category category, String imageUrl) {
         Movie movie = new Movie();
         movie.setTitle(movieDTO.getTitle());
         movie.setDirector(movieDTO.getDirector());
-        movie.setDescription(movieDTO.getDescription());
         movie.setReleaseDate(movieDTO.getReleaseDate());
+        movie.setDescription(movieDTO.getDescription());
         movie.setCategory(category);
         movie.setUser(user);
+        movie.setImageUrl(imageUrl);
         return movie;
     }
 
     public static MovieDTO mapToMovieDTO(Movie movie) {
-        MovieDTO movieDTO = new MovieDTO();
-        movieDTO.setId(movie.getId()); // If you need to return the generated id
-        movieDTO.setTitle(movie.getTitle());
-        movieDTO.setDirector(movie.getDirector());
-        movieDTO.setDescription(movie.getDescription());
-        movieDTO.setReleaseDate(movie.getReleaseDate());
-        movieDTO.setCategoryId(movie.getCategory().getId());
-        movieDTO.setUserId(movie.getUser().getId());
-        return movieDTO;
+        return new MovieDTO(
+                movie.getTitle(),
+                movie.getDirector(),
+                movie.getReleaseDate(),
+                movie.getDescription(),
+                movie.getCategory().getId()
+        );
     }
 
 }

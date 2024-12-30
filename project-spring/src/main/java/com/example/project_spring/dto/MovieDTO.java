@@ -11,18 +11,16 @@ import lombok.Setter;
 
 import java.util.Date;
 
+// MovieDTO
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class MovieDTO {
-
-    private Long id;
     private String title;
     private String director;
-    private Long categoryId;
-    private Long userId;
-    private String description;
     private Date releaseDate;
-
+    private String description;
+    private Long categoryId;
 }
+

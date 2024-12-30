@@ -5,7 +5,9 @@ import lombok.*;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -34,4 +36,6 @@ public class User {
     //E-mail verification
     private String verificationToken;
     private boolean isEnabled;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Movie> moviesAdded = new ArrayList<>();
 }
