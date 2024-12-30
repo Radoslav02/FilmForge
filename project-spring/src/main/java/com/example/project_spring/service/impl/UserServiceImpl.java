@@ -42,6 +42,8 @@ public class UserServiceImpl implements UserService {
 
         User user = UserMapper.maptoUser(userDTO);
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        user.setConfirmationPassword(passwordEncoder.encode(userDTO.getConfirmationPassword()));
+        user.setRole("user");
         user.setEnabled(false);
         user.setVerificationToken(UUID.randomUUID().toString());
         User savedUser = userRepository.save(user);
@@ -59,8 +61,6 @@ public class UserServiceImpl implements UserService {
         }
         return false;
     }
-
-
 
     @Override
     public UserDTO getUserById(Long userID) {
@@ -122,6 +122,11 @@ public class UserServiceImpl implements UserService {
         // Ažuriraj osnovne podatke
         existingUser.setFirstName(updatedUser.getFirstName());
         existingUser.setLastName(updatedUser.getLastName());
+        existingUser.setUsername(updatedUser.getUsername());
+        existingUser.setCity(updatedUser.getCity());
+        existingUser.setCountry(updatedUser.getCountry());
+        existingUser.setStreet(updatedUser.getStreet());
+        existingUser.setNumber(updatedUser.getNumber());
 
         // Ako postoji nova lozinka, šifrujte je pre čuvanja
         if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {

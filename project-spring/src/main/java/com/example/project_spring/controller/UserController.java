@@ -45,9 +45,6 @@ public class UserController {
         }
     }
 
-
-
-
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> loginUser(@RequestBody LoginRequestDTO loginRequest) {
         // Log ulaznih podataka
@@ -75,6 +72,11 @@ public class UserController {
             response.put("email", authenticatedUser.getEmail());
             response.put("firstName", authenticatedUser.getFirstName());
             response.put("lastName", authenticatedUser.getLastName());
+            response.put("username", authenticatedUser.getUsername());
+            response.put("city", authenticatedUser.getCity());
+            response.put("country", authenticatedUser.getCountry());
+            response.put("street", authenticatedUser.getStreet());
+            response.put("number", authenticatedUser.getNumber());
             response.put("id", authenticatedUser.getId());
             response.put("isAdmin", authenticatedUser.getRole());
 

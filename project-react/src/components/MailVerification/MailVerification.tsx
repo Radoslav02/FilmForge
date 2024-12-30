@@ -11,7 +11,7 @@ export default function VerifyEmail() {
   
     if (token) {
       fetch(`http://localhost:8080/api/users/verify-email?token=${token}`, {
-        method: "GET", // Promenjen metod na GET
+        method: "GET", 
       })
         .then((response) => {
           if (response.ok) {

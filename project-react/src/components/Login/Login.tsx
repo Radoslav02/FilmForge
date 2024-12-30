@@ -36,6 +36,11 @@ export default function Login() {
         email: responseEmail,
         firstName,
         lastName,
+        username,
+        city,
+        country,
+        street,
+        number,
         id,
         isAdmin,
       } = await response.json();
@@ -53,20 +58,25 @@ export default function Login() {
       // Čuvanje tokena u localStorage
       localStorage.setItem("jwtToken", token);
 
-      // Ažuriranje Redux store-a sa korisničkim podacima
+      
       dispatch(
         login({
           id,
-          email: responseEmail, // Koristi email iz odgovora
+          email: responseEmail, 
           isAdmin,
           firstName,
           lastName,
+          username,
+          city,
+          country,
+          street,
+          number,
         })
       );
 
       navigate("/profile");
     } catch (error: any) {
-      // Logovanje greške
+    
       console.error("Login failed:", error.message);
       alert(error.message);
     }

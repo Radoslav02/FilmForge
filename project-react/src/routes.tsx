@@ -7,6 +7,7 @@ import Profile from "./components/Profile/Profile";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 import VerifyEmail from "./components/MailVerification/MailVerification";
 import CheckEmail from "./components/CheckMail/CheckMail";
+import AddPost from "./components/AddPost/AddPost";
 
 export const router = createHashRouter([
   {
@@ -40,6 +41,10 @@ export const router = createHashRouter([
       {
         path: "/check-email",
         element: <CheckEmail />,
+      },
+      {
+        path: "/add-post",
+        element: <AddPost />,
       },
     ],
   },

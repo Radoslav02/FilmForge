@@ -1,17 +1,22 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-// Define an interface for the User object to include additional fields
+
 interface User {
   id: string;
   email: string;
   isAdmin: boolean;
   firstName?: string;
   lastName?: string;
+  username?:string;
+  city?:string;
+  country?:string;
+  street?:string;
+  number?:string;
 }
 
-// Update the UserState interface to reflect the new User structure
+
 interface UserState {
-  user: User | null; // Allow user to be null or an object with User properties
+  user: User | null; 
 }
 
 const initialState: UserState = {
@@ -22,7 +27,7 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    login(state, action: PayloadAction<User>) { // Update PayloadAction to use User interface
+    login(state, action: PayloadAction<User>) { 
       state.user = action.payload;
     },
     logout(state) {

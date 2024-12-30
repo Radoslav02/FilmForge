@@ -1,0 +1,96 @@
+.profile-page-container {
+  height: 850px;
+  width: 100%;
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 50px;
+  background-color: black;
+  color: white;
+}
+
+.profile-info-container{
+    display: flex;
+    gap: 100px;
+}
+
+.profile-info{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.profile-wrapper{
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-info label{
+    font-size: 15px;
+}
+
+.profile-button-wrapper{
+    width: 600px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.logout-button{
+    width: 250px;
+    height: 30px;
+    border: 1px solid black;
+    color: black;
+    background-color: white;
+}
+
+.edit-on-button{
+    width: 250px;
+    height: 30px;
+    border: none;
+    color: black;
+    background-color: #e3cb14;
+}
+
+.profile-edit{
+    display: flex;
+    gap: 150px;
+}
+
+.edit-container{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.edit-wrapper{
+    display: flex;
+    flex-direction: column;
+}
+
+.edit-wrapper input{
+    width: 250px;
+    height: 30px;
+}
+
+.edit-buttons-wrapper{
+    width: 650px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.save-edit-button{
+    width: 250px;
+    height: 30px;
+    border: none;
+    color: black;
+    background-color: #e3cb14;
+}
+
+.cancel-edit-button{
+    width: 250px;
+    height: 30px;
+    border: 1px solid black;
+    color: black;
+    background-color: white;
+}

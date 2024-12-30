@@ -78,7 +78,8 @@ public class WebSecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // Dozvoljava sve rute
-                        .allowedOrigins("http://localhost:5173") // Dozvoljava zahteve sa ovog URL-a
+                        .allowedOrigins("http://localhost:5173")
+                        .allowedOrigins("http://localhost:5174")// Dozvoljava zahteve sa ovog URL-a
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Dozvoljava navedene metode
                         .allowedHeaders("*") // Dozvoljava sve zaglavlja
                         .allowCredentials(true); // Dozvoljava slanje kolačića
