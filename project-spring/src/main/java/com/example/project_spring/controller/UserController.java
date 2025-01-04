@@ -2,9 +2,11 @@ package com.example.project_spring.controller;
 
 import com.example.project_spring.dto.CategoryDTO;
 import com.example.project_spring.dto.LoginRequestDTO;
+import com.example.project_spring.dto.MovieDTO;
 import com.example.project_spring.dto.UserDTO;
 import com.example.project_spring.security.jwt.JwtTokenProvider;
 import com.example.project_spring.service.impl.CategoryServiceImpl;
+import com.example.project_spring.service.impl.MovieServiceImp;
 import com.example.project_spring.service.impl.UserServiceImpl;
 import lombok.AllArgsConstructor;
 import org.apache.coyote.Response;
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +27,7 @@ public class UserController {
 
     private final UserServiceImpl userService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final MovieServiceImp movieServiceImp;
 
     @PostMapping("/register")
     public ResponseEntity<UserDTO> registerUser(@RequestBody UserDTO userDTO) {
@@ -98,20 +102,46 @@ public class UserController {
     @PutMapping("/editProfile")
     public ResponseEntity<UserDTO> updateUserProfile(@RequestBody UserDTO updatedUser, Authentication authentication) {
         try {
-            // Log podataka koje je frontend poslao
+
             System.out.println("Received user update payload: " + updatedUser);
 
-            String email = authentication.getName(); // Dohvati email iz JWT tokena
+            String email = authentication.getName();
             UserDTO updatedUserProfile = userService.updateUserByEmail(email, updatedUser);
 
-            // Log uspešne izmene
+
             System.out.println("Successfully updated user profile: " + updatedUserProfile);
 
             return ResponseEntity.ok(updatedUserProfile);
         } catch (RuntimeException e) {
-            // Log greške
+
             System.err.println("Error updating profile: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<UserDTO>> searchUsers(@RequestParam String username) {
+        try {
+            List<UserDTO> users = userService.searchUsers(username);
+            return ResponseEntity.ok(users);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ArrayList<>());  // Ensure the response is always valid
+        }
+    }
+
+    @GetMapping("/{id}/movies")
+    public ResponseEntity<List<MovieDTO>> getUserMovies(@PathVariable Long id) {
+        try {
+            List<MovieDTO> movies = movieServiceImp.getMoviesByUserId(id);
+            return ResponseEntity.ok(movies);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(null); // If user is not found, return 404
+        }
+    }
+
+    @GetMapping("/{id}")
+    public UserDTO getUser(@PathVariable Long id) {
+        return userService.getUserById(id);
     }
 }

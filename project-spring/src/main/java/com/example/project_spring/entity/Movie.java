@@ -1,5 +1,6 @@
 package com.example.project_spring.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,7 @@ public class Movie {
     private Category category;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "user_id", nullable = false)
     private User user; // This is the association with the logged-in user
 

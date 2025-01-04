@@ -17,10 +17,21 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MovieDTO {
+    private Long id;
     private String title;
     private String director;
     private Date releaseDate;
     private String description;
     private Long categoryId;
+    private String imageUrl;
+    private String categoryName;
+
+    public MovieDTO(String title, String director, Date releaseDate, String description, Long categoryId) {
+        this.categoryId = categoryId;
+        this.description = description;
+        this.director = director;
+        this.releaseDate = releaseDate;
+        this.title = title;
+    }
 }
 

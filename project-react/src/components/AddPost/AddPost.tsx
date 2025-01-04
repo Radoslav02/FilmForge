@@ -6,10 +6,12 @@ import "./AddPost.css";
 
 export default function AddPost() {
   const dispatch = useDispatch();
-  const user = useSelector((state: RootState) => state.auth.user); 
+  const user = useSelector((state: RootState) => state.auth.user);
   const token = localStorage.getItem("jwtToken");
 
-  const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>(
+    []
+  );
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [movieData, setMovieData] = useState({
     title: "",
@@ -18,7 +20,7 @@ export default function AddPost() {
     description: "",
   });
   const [image, setImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null); 
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,11 +34,14 @@ export default function AddPost() {
 
     const fetchCategories = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/categories/allCategories", {
-          headers: {
-            "Authorization": `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          "http://localhost:8080/api/categories/allCategories",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (!response.ok) {
           throw new Error("Failed to fetch categories.");
@@ -52,7 +57,9 @@ export default function AddPost() {
     fetchCategories();
   }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setMovieData((prev) => ({ ...prev, [name]: value }));
   };
@@ -63,7 +70,7 @@ export default function AddPost() {
       setImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result as string); 
+        setImagePreview(reader.result as string);
       };
       reader.readAsDataURL(file);
     } else {
@@ -73,7 +80,7 @@ export default function AddPost() {
 
   const handleRemoveImage = () => {
     setImage(null);
-    setImagePreview(null); 
+    setImagePreview(null);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -113,9 +120,8 @@ export default function AddPost() {
 
       if (image) formData.append("image", image);
 
-      
       if (user && user.id) {
-        formData.append("userId", user.id.toString()); 
+        formData.append("userId", user.id.toString());
       } else {
         throw new Error("User ID is required");
       }
@@ -123,9 +129,9 @@ export default function AddPost() {
       const response = await fetch("http://localhost:8080/api/movie/addMovie", {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${token}`, 
+          Authorization: `Bearer ${token}`,
         },
-        body: formData, 
+        body: formData,
       });
 
       if (!response.ok) {
@@ -143,7 +149,7 @@ export default function AddPost() {
       });
       setSelectedCategory("");
       setImage(null);
-      setImagePreview(null); 
+      setImagePreview(null);
     } catch (err: any) {
       setError(err.message || "An error occurred while adding the movie.");
     } finally {
@@ -167,35 +173,56 @@ export default function AddPost() {
           <h1>Post Movie</h1>
           {error && <p className="error-message">{error}</p>}
         </div>
-        <div className="add-post-form-wrapper">
-          <label>Movie title:</label>
-          <input
-            type="text"
-            name="title"
-            value={movieData.title}
-            onChange={handleInputChange}
-            disabled={isLoading}
-          />
+        <div className="add-post-input-container">
+          <div className="add-post-form-wrapper">
+            <label>Movie title:</label>
+            <input
+              type="text"
+              name="title"
+              value={movieData.title}
+              onChange={handleInputChange}
+              disabled={isLoading}
+            />
+          </div>
+
+          <div className="add-post-form-wrapper">
+            <label>Director:</label>
+            <input
+              type="text"
+              name="director"
+              value={movieData.director}
+              onChange={handleInputChange}
+              disabled={isLoading}
+            />
+          </div>
         </div>
-        <div className="add-post-form-wrapper">
-          <label>Director:</label>
-          <input
-            type="text"
-            name="director"
-            value={movieData.director}
-            onChange={handleInputChange}
-            disabled={isLoading}
-          />
-        </div>
-        <div className="add-post-form-wrapper">
-          <label>Release Date:</label>
-          <input
-            type="date"
-            name="releaseDate"
-            value={movieData.releaseDate}
-            onChange={handleInputChange}
-            disabled={isLoading}
-          />
+        <div className="add-post-input-container">
+          <div className="add-post-form-wrapper">
+            <label>Release Date:</label>
+            <input
+              type="date"
+              name="releaseDate"
+              value={movieData.releaseDate}
+              onChange={handleInputChange}
+              disabled={isLoading}
+            />
+          </div>
+          <div className="add-post-form-wrapper">
+            <label>Category:</label>
+            <select
+              className="category-select"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              disabled={isLoading}
+            >
+              <option value="">Select a category</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
         <div className="add-post-form-wrapper">
           <label>Description:</label>
@@ -206,37 +233,36 @@ export default function AddPost() {
             disabled={isLoading}
           />
         </div>
-        <div className="add-post-form-wrapper">
-          <label>Category:</label>
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
+
+        <div className="add-post-form-image-wrapper">
+          <label>Upload cover:</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
             disabled={isLoading}
-          >
-            <option value="">Select a category</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="add-post-form-wrapper">
-          <label>Upload image:</label>
-          <input type="file" accept="image/*" onChange={handleImageChange} disabled={isLoading} />
+            className="image-input"
+          />
           {imagePreview && (
             <div className="image-preview">
-              <img src={imagePreview} alt="Preview" style={{ width: "100px", height: "100px" }} />
-              <button type="button" onClick={handleRemoveImage} disabled={isLoading}>
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="preview-image"
+              />
+              <button
+                type="button"
+                onClick={handleRemoveImage}
+                disabled={isLoading}
+                className="remove-image-button"
+              >
                 Remove Image
               </button>
             </div>
           )}
         </div>
         <div className="add-post-form-wrapper">
-          <button type="submit" disabled={isLoading}>
-            {isLoading ? "Posting..." : "Post"}
-          </button>
+          <div className="add-post-button-wrapper">
           <button
             type="button"
             onClick={() => {
@@ -248,12 +274,18 @@ export default function AddPost() {
               });
               setSelectedCategory("");
               setImage(null);
-              setImagePreview(null); // Clear the preview when cancel is clicked
+              setImagePreview(null);
             }}
             disabled={isLoading}
+            className="cancel-post-movie-button"
           >
             Cancel
           </button>
+          <button className="submit-post-button" type="submit" disabled={isLoading}>
+            {isLoading ? "Posting..." : "Post"}
+          </button>
+         
+          </div>
         </div>
       </form>
     </div>

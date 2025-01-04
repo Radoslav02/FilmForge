@@ -1,6 +1,7 @@
 package com.example.project_spring.dto;
 
 import com.example.project_spring.entity.Movie;
+import com.example.project_spring.entity.FriendRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,8 +31,12 @@ public class UserDTO {
     private String role;
     private LocalDateTime registrationDate;
     private LocalDateTime lastLogin;
-    //E-mail verification
+    // E-mail verification
     private String verificationToken;
     private boolean isEnabled;
     private List<Movie> moviesAdded = new ArrayList<>();
+
+    // Added sent and received friend requests
+    private List<FriendRequestDTO> sentRequests = new ArrayList<>();
+    private List<FriendRequestDTO> receivedRequests = new ArrayList<>();
 }

@@ -1,0 +1,58 @@
+.friend-request-container {
+  width: 100%;
+  min-height: 850px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 50px;
+  background-color: black;
+  color: white;
+  gap: 30px;
+}
+
+.request-ul {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.request-li {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  padding: 10px;
+}
+
+.friend-request-page-title {
+  color: #c4b016;
+}
+
+.friend-request-button-wrapper {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.accept-request-button {
+  width: 100px;
+  height: 30px;
+  border: none;
+  color: black;
+  background-color: #e3cb14;
+  border-radius: 5px;
+}
+
+.decline-request-button {
+  width: 100px;
+  height: 30px;
+  border: 1px solid black;
+  color: black;
+  background-color: white;
+  border-radius: 5px;
+}
+
+.from-p{
+    font-weight: bold;
+}

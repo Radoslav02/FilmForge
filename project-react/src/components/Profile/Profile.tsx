@@ -6,7 +6,7 @@ import { login, logout } from "../Redux/authSlice";
 
 export default function Profile() {
   const dispatch = useDispatch();
-  const user = useSelector((state: RootState) => state.auth.user); // Get user from Redux
+  const user = useSelector((state: RootState) => state.auth.user); 
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState(user);

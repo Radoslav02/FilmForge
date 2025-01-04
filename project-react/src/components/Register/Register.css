@@ -36,6 +36,7 @@
     border: 1px solid black;
     color: black;
     background-color: white;
+    border-radius: 5px;
     
 }
 
@@ -45,6 +46,7 @@
     border: none;
     color: black;
     background-color: #e3cb14;
+    border-radius: 5px;
 }
 
 .register-form{

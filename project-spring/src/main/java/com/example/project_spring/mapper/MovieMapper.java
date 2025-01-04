@@ -22,11 +22,14 @@ public class MovieMapper {
 
     public static MovieDTO mapToMovieDTO(Movie movie) {
         return new MovieDTO(
+                movie.getId(),
                 movie.getTitle(),
                 movie.getDirector(),
                 movie.getReleaseDate(),
                 movie.getDescription(),
-                movie.getCategory().getId()
+                movie.getCategory().getId(),
+                movie.getImageUrl(),
+                movie.getCategory().getName()
         );
     }
 

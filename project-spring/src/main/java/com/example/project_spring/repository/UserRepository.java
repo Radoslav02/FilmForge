@@ -1,5 +1,6 @@
 package com.example.project_spring.repository;
 
+import com.example.project_spring.dto.MovieDTO;
 import com.example.project_spring.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -15,4 +16,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsername(String username);
 
     Optional<User> findByVerificationToken(String token);
+
+    public List<User> findByUsernameContainingIgnoreCase(String username);
+
+
 }

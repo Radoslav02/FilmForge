@@ -1,13 +1,16 @@
 package com.example.project_spring.service.impl;
 
 
+import com.example.project_spring.dto.MovieDTO;
 import com.example.project_spring.dto.UserDTO;
 
+import com.example.project_spring.entity.Movie;
 import com.example.project_spring.entity.User;
 import com.example.project_spring.exception.ResourceNotFoundException;
 
 import com.example.project_spring.mapper.UserMapper;
 
+import com.example.project_spring.repository.MovieRepository;
 import com.example.project_spring.repository.UserRepository;
 import com.example.project_spring.service.UserService;
 import lombok.AllArgsConstructor;
@@ -30,6 +33,8 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
     private UserRepository userRepository;
+    private final MovieRepository movieRepository;
+
 
     public UserDTO createUser(UserDTO userDTO) {
         if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
@@ -40,14 +45,14 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Username already exists");
         }
 
-        User user = UserMapper.maptoUser(userDTO);
+        User user = UserMapper.mapToUser(userDTO);
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         user.setConfirmationPassword(passwordEncoder.encode(userDTO.getConfirmationPassword()));
         user.setRole("user");
         user.setEnabled(false);
         user.setVerificationToken(UUID.randomUUID().toString());
         User savedUser = userRepository.save(user);
-        return UserMapper.maptoUserDTO(savedUser);
+        return UserMapper.mapToUserDTO(savedUser);
     }
 
     public boolean verifyUserEmail(String token) {
@@ -67,13 +72,15 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userID).orElseThrow(() ->
                 new ResourceNotFoundException("User with given id doesn't exist: " + userID));
 
-        return UserMapper.maptoUserDTO(user);
+        return UserMapper.mapToUserDTO(user);
     }
+
+
 
     @Override
     public List<UserDTO> getAllUsers() {
         List<User> users = userRepository.findAll();
-        return users.stream().map((user) -> UserMapper.maptoUserDTO(user)).collect(Collectors.toList());
+        return users.stream().map((user) -> UserMapper.mapToUserDTO(user)).collect(Collectors.toList());
     }
 
     @Override
@@ -103,7 +110,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         // Map user entity to DTO
-        return UserMapper.maptoUserDTO(user);
+        return UserMapper.mapToUserDTO(user);
     }
 
     @Override
@@ -111,7 +118,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + email));
 
-        return UserMapper.maptoUserDTO(user);
+        return UserMapper.mapToUserDTO(user);
     }
 
     @Override
@@ -134,7 +141,20 @@ public class UserServiceImpl implements UserService {
         }
 
         User updatedUserObj = userRepository.save(existingUser);
-        return UserMapper.maptoUserDTO(updatedUserObj);
+        return UserMapper.mapToUserDTO(updatedUserObj);
     }
+
+    // In UserServiceImpl
+    public List<UserDTO> searchUsers(String username) {
+        return userRepository.findByUsernameContainingIgnoreCase(username) // Using 'contains' or 'LIKE' query
+                .stream()
+                .map(UserMapper::mapToUserDTO)
+                .collect(Collectors.toList());
+    }
+
+
+
+
+
 }
 

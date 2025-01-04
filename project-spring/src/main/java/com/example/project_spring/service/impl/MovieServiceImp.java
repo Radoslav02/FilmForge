@@ -20,7 +20,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 // MovieServiceImp
 @Service
@@ -70,4 +72,29 @@ public class MovieServiceImp implements MovieService {
             throw new RuntimeException("Error occurred while creating the movie", e);
         }
     }
+
+    @Override
+    public List<MovieDTO> getMoviesByUserId(Long userId) {
+        // Proveri da li korisnik postoji
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Pronađi filmove povezane sa korisnikom
+        List<Movie> movies = movieRepository.findByUser(user);
+
+        // Mapiraj entitete Movie u DTO-ove MovieDTO
+        return movies.stream()
+                .map(movie -> new MovieDTO(
+                        movie.getId(),
+                        movie.getTitle(),
+                        movie.getDirector(),
+                        movie.getReleaseDate(),
+                       movie.getDescription(),
+                        movie.getCategory().getId(),
+                        movie.getImageUrl(),
+                        movie.getCategory().getName()// Dodaj naziv kategorije umesto ID-a
+                ))
+                .collect(Collectors.toList());
+    }
+
 }

@@ -8,6 +8,9 @@ import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 import VerifyEmail from "./components/MailVerification/MailVerification";
 import CheckEmail from "./components/CheckMail/CheckMail";
 import AddPost from "./components/AddPost/AddPost";
+import SearchedUserProfile from "./components/SearchedUserProfile/SearchedUserProfile";
+import ShowFriendRequests from "./components/ShowFriendRequest/ShowFriendRequests";
+ // Import UserProfile component
 
 export const router = createHashRouter([
   {
@@ -46,6 +49,14 @@ export const router = createHashRouter([
         path: "/add-post",
         element: <AddPost />,
       },
+      {
+        path: "/user/:userId", 
+        element: <SearchedUserProfile />, 
+      },
+      {
+        path: "/friend-request", 
+        element: <ShowFriendRequests />, 
+      }
     ],
   },
 ]);

@@ -10,4 +10,6 @@ import java.util.List;
 public interface MovieService {
 
     MovieDTO createMovie(MovieDTO movieDTO, MultipartFile image, Long userId);
+
+    public List<MovieDTO> getMoviesByUserId(Long userId);
 }

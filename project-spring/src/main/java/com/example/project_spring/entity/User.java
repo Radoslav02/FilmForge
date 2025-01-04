@@ -1,5 +1,6 @@
 package com.example.project_spring.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import jakarta.persistence.*;
@@ -31,11 +32,23 @@ public class User {
     private String country;
     private String role;
     private LocalDateTime registrationDate;
+
     @Column(name = "last_login")
     private LocalDateTime lastLogin;
-    //E-mail verification
+
+    // E-mail verification
     private String verificationToken;
     private boolean isEnabled;
+
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<FriendRequest> sentRequests = new ArrayList<>();  // Requests sent by this user
+
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<FriendRequest> receivedRequests = new ArrayList<>();  // Requests received by this user
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Movie> moviesAdded = new ArrayList<>();
 }

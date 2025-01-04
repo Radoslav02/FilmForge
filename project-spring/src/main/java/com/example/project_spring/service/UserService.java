@@ -2,6 +2,7 @@ package com.example.project_spring.service;
 
 import com.example.project_spring.dto.CategoryDTO;
 import com.example.project_spring.dto.UserDTO;
+import com.example.project_spring.entity.User;
 
 import java.util.List;
 
@@ -17,6 +18,9 @@ public interface UserService {
     public UserDTO authenticateUser(String email, String password);
 
     public UserDTO getUserByEmail(String email);
+
     public UserDTO updateUserByEmail(String email, UserDTO updatedUser);
+
+    public List<UserDTO> searchUsers(String username);
 
 }
