@@ -64,6 +64,7 @@ public class WebSecurityConfig {
                                 .requestMatchers("/api/categories/allCategories").permitAll()
                                 .requestMatchers("/api/users/search").permitAll()
                                 .requestMatchers("/api/requests/received/").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/movie/**").permitAll()
                                 .requestMatchers("/uploads/**").permitAll()
                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                                 .anyRequest().authenticated()

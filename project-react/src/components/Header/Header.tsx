@@ -15,19 +15,19 @@ export default function Header() {
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.auth.user);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [menuActive, setMenuActive] = useState(false); // New state for tracking active menu
+  const [menuActive, setMenuActive] = useState(false); 
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
-    setMenuActive(!menuActive); // Toggle the active state
+    setMenuActive(!menuActive); 
   };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setMenuOpen(false);
-        setMenuActive(false); // Close the menu and reset active state when clicking outside
+        setMenuActive(false); 
       }
     };
 
@@ -77,7 +77,7 @@ export default function Header() {
                   e.stopPropagation();
                   !user ? navigate("/login") : navigate("/profile");
                   setMenuOpen(false);
-                  setMenuActive(false); // Close menu and reset active state
+                  setMenuActive(false); 
                 }}
               >
                 <AccountCircleOutlinedIcon sx={{ fontSize: 30 }} />
@@ -93,13 +93,13 @@ export default function Header() {
                   e.stopPropagation();
                   navigate("/friend-request");
                   setMenuOpen(false);
-                  setMenuActive(false); // Close menu and reset active state
+                  setMenuActive(false);
                 }}
               >
                 <PeopleIcon sx={{ fontSize: 30 }} />
                 <label>Friend Requests</label>
               </div>
-              <div className="menu-item">
+              <div onClick={() => navigate("messages")} className="menu-item">
                 <TextsmsIcon />
                 <label>Messages</label>
               </div>

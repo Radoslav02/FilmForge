@@ -121,8 +121,13 @@
 .submit-post-button {
   width: 200px;
   height: 30px;
-  background-color: #e3cb14;
+  background-color: #e1ca1c;
   border: none;
   color: black;
   border-radius: 5px;
+}
+
+.submit-post-button:hover{
+  background-color: #d0b802;
+  color: #000000;
 }

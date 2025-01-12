@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./UserSearch.css";
-import SearchIcon from '@mui/icons-material/Search';
+import SearchIcon from "@mui/icons-material/Search";
 
 interface User {
   id: number;
@@ -11,10 +11,11 @@ interface User {
 const UserSearch: React.FC = () => {
   const [query, setQuery] = useState<string>("");
   const [users, setUsers] = useState<User[]>([]);
+  const [isDropdownVisible, setIsDropdownVisible] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [isDropdownVisible, setIsDropdownVisible] = useState<boolean>(false); 
   const navigate = useNavigate();
-  const inputRef = useRef<HTMLDivElement>(null); 
+  const inputRef = useRef<HTMLDivElement>(null);
 
   const handleUserClick = (userId: number) => {
     navigate(`/user/${userId}`);
@@ -22,24 +23,24 @@ const UserSearch: React.FC = () => {
   };
 
   const searchUsers = async () => {
-    if (!query) {
+    if (!query.trim()) {
       setUsers([]);
       return;
     }
-
+  
     const token = localStorage.getItem("jwtToken");
-
+  
     if (!token) {
-      console.error("No token found, user not authenticated");
-      setError("No token found. Please log in.");
+      setError("User not authenticated");
       return;
     }
-
+  
+    setIsLoading(true);
     setError(null);
-
+  
     try {
       const response = await fetch(
-        `http://localhost:8080/api/users/search?username=${query}`,
+        `http://localhost:8080/api/users/search?username=${encodeURIComponent(query)}`,
         {
           method: "GET",
           headers: {
@@ -47,35 +48,50 @@ const UserSearch: React.FC = () => {
           },
         }
       );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch users");
-      }
-
-      const data = await response.json();
-      console.log("Users found:", data);
-
-      if (Array.isArray(data)) {
-        setUsers(data);
-        setIsDropdownVisible(true); 
+  
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Parsed response:", data);
+  
+        if (Array.isArray(data) && data.length > 0) {
+          setUsers(data);
+          setIsDropdownVisible(true);
+        } else {
+          setUsers([]);
+          setError("No users found");
+        }
       } else {
-        setUsers([]);
+        const errorData = await response.json();
+        setError(errorData.message || "No users found");
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error("Error fetching users:", err);
-      setError(err.message || "An error occurred while fetching users");
+      setError("An error occurred while searching for users");
+    } finally {
+      setIsLoading(false);
     }
   };
+  
+
+  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    searchUsers();
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+
+    debounceTimeout.current = setTimeout(() => {
+      searchUsers();
+    }, 500);
   }, [query]);
 
- 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (inputRef.current && !inputRef.current.contains(event.target as Node)) {
-        setIsDropdownVisible(false); 
+      if (
+        inputRef.current &&
+        !inputRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownVisible(false);
       }
     };
 
@@ -87,16 +103,20 @@ const UserSearch: React.FC = () => {
 
   return (
     <div className="search-container" ref={inputRef}>
-      <input
-        type="text"
-        placeholder="Search users by username..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        onFocus={() => setIsDropdownVisible(true)} 
-        className="search-input"
-      />
-      <SearchIcon className="search-icon" />
-      {error && <p className="error-message">{error}</p>}
+      <div className="search-input-wrapper">
+        <input
+          type="text"
+          placeholder="Search users by username..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onFocus={() => setIsDropdownVisible(true)}
+          className="search-input"
+        />
+        <SearchIcon className="search-icon" />
+      </div>
+
+      {isLoading && <p className="loading-message">Loading...</p>}
+
       {isDropdownVisible && query && (
         <ul className="search-results">
           {users.length > 0 ? (
@@ -110,7 +130,9 @@ const UserSearch: React.FC = () => {
               </li>
             ))
           ) : (
-            <li>No users found</li>
+            <li className="no-results">
+              {error || "No users found"}
+            </li>
           )}
         </ul>
       )}

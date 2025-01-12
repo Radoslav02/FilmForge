@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom'; 
 import { RootState } from '../Redux/store';
+import "./SearchedUserProfile.css";
 
 interface Movie {
   id: number;
@@ -28,6 +29,14 @@ const SearchedUserProfile: React.FC = () => {
   const [isSendingRequest, setIsSendingRequest] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const user = useSelector((state: RootState) => state.auth.user);
+  const [expandedDescription, setExpandedDescription] = useState<number | null>(
+    null
+  );
+
+  const handleViewMore = (movieId: number) => {
+    setExpandedDescription(expandedDescription === movieId ? null : movieId);
+  };
+
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -108,28 +117,53 @@ const SearchedUserProfile: React.FC = () => {
   if (!profile) return <p>Loading...</p>;
 
   return (
-    <div>
+    <div className="searched-user-profile-container">
+
+      <div className="profile-name-wrapper">
       <h1>{profile.firstName} {profile.lastName} ({profile.username})</h1>
-      <button onClick={handleSendFriendRequest} disabled={isSendingRequest}>
+      <button className="send-request-button" onClick={handleSendFriendRequest} disabled={isSendingRequest}>
         {isSendingRequest ? 'Sending...' : 'Send Friend Request'}
       </button>
+      </div>
 
-      <h2>Movies Added by {profile.username}</h2>
+     
       {movies.length > 0 ? (
-        <ul style={{ listStyle: 'none', padding: 0 }}>
+        <div className="movies-container">
           {movies.map((movie) => (
-            <li key={movie.id} style={{ marginBottom: '20px', border: '1px solid #ccc', padding: '10px', borderRadius: '5px' }}>
-              <h3>{movie.title}</h3>
+            <div className="movie-card" key={movie.id}>
+              <div className="profile-movie-info-wrapper">
+              <p>Title: {movie.title}</p>
               <p><strong>Director:</strong> {movie.director}</p>
               <p><strong>Release Date:</strong> {new Date(movie.releaseDate).toLocaleDateString()}</p>
               <p><strong>Category:</strong> {movie.categoryName}</p>
-              <p><strong>Description:</strong> {movie.description}</p>
+              <div className="profile-desc-wrapper">
+                <p className="profile-desc-p">
+                  {expandedDescription === movie.id
+                    ? movie.description
+                    : `${movie.description.slice(0, 174)}`}
+                </p>
+                {movie.description.length > 174 && (
+                  <button
+                    className="view-more"
+                    onClick={() => handleViewMore(movie.id)}
+                  >
+                    {expandedDescription === movie.id
+                      ? "View Less"
+                      : "View More"}
+                  </button>
+                )}
+              </div>
               {movie.imageUrl && (
-                <img src={`http://localhost:8080${movie.imageUrl}`} alt={movie.title} style={{ maxWidth: '200px', display: 'block', marginTop: '10px' }} />
+                <img
+                  src={`http://localhost:8080${movie.imageUrl}`}
+                  alt={movie.title}
+                  className="profile-movie-image"
+                />
               )}
-            </li>
+              </div>
+            </div>
           ))}
-        </ul>
+        </div>
       ) : (
         <p>This user has no movies added yet.</p>
       )}

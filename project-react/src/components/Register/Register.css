@@ -45,8 +45,13 @@
     height: 30px;
     border: none;
     color: black;
-    background-color: #e3cb14;
+    background-color: #e1ca1c;
     border-radius: 5px;
+}
+
+.register-button:hover{
+    background-color: #d0b802;
+    color: #000000;
 }
 
 .register-form{

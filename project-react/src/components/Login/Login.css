@@ -45,10 +45,15 @@
 .login-button{
     width: 240px;
     height: 30px;
-    background-color: #e3cb14;
+    background-color: #e1ca1c;
     border: none;
     color: black;
     border-radius: 5px;
+}
+
+.login-button:hover{
+    background-color: #d0b802;
+    color: #000000;
 }
 
 .dont{

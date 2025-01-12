@@ -32,6 +32,10 @@ public class FriendRequestServiceImpl implements FriendRequestService {
 
     @Override
     public FriendRequestDTO sendFriendRequest(Long senderId, Long receiverId) {
+        if (senderId.equals(receiverId)) {
+            throw new RuntimeException("Korisnik ne može sam sebi poslati zahtev za prijateljstvo.");
+        }
+
         try {
             User sender = userRepository.findById(senderId)
                     .orElseThrow(() -> new RuntimeException("Sender not found"));
@@ -49,6 +53,7 @@ public class FriendRequestServiceImpl implements FriendRequestService {
             throw new RuntimeException("Failed to send friend request: " + e.getMessage());
         }
     }
+
 
     public List<FriendRequestDTO> getRequestsForUser(Long userId) {
         return friendRequestRepository.findByReceiverId(userId)
@@ -78,6 +83,29 @@ public class FriendRequestServiceImpl implements FriendRequestService {
                 .orElseThrow(() -> new RuntimeException("Request not found"));
         friendRequestRepository.delete(request);
     }
+
+    @Override
+    public List<User> getFriends(Long userId) {
+        // First, find the received requests that are accepted
+        List<FriendRequest> receivedRequests = friendRequestRepository.findByReceiverIdAndAccepted(userId, true);
+
+        // Then, find the sent requests that are accepted
+        List<FriendRequest> sentRequests = friendRequestRepository.findBySenderIdAndAccepted(userId, true);
+
+        // Create a list of friends
+        List<User> friends = receivedRequests.stream()
+                .map(FriendRequest::getSender) // Add users who sent an accepted request
+                .collect(Collectors.toList());
+
+        // Add users who accepted the user's request
+        sentRequests.stream()
+                .map(FriendRequest::getReceiver) // Add users who accepted the request
+                .forEach(friends::add);
+
+        return friends;
+    }
+
+
 
 
 }

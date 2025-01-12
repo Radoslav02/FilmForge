@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -144,15 +145,20 @@ public class UserServiceImpl implements UserService {
         return UserMapper.mapToUserDTO(updatedUserObj);
     }
 
-    // In UserServiceImpl
     public List<UserDTO> searchUsers(String username) {
-        return userRepository.findByUsernameContainingIgnoreCase(username) // Using 'contains' or 'LIKE' query
-                .stream()
+        List<User> users = userRepository.findByUsernameContainingIgnoreCase(username);
+
+        if (users == null || users.isEmpty()) {
+            return Collections.emptyList(); // Return empty list if no users found
+        }
+
+        // Debug log for verification
+        users.forEach(user -> System.out.println("Found user: " + user.getUsername()));
+
+        return users.stream()
                 .map(UserMapper::mapToUserDTO)
                 .collect(Collectors.toList());
     }
-
-
 
 
 

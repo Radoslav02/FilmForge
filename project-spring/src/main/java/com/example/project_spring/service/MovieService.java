@@ -12,4 +12,6 @@ public interface MovieService {
     MovieDTO createMovie(MovieDTO movieDTO, MultipartFile image, Long userId);
 
     public List<MovieDTO> getMoviesByUserId(Long userId);
+
+    public List<MovieDTO> getMoviesByFriends(Long userId);
 }

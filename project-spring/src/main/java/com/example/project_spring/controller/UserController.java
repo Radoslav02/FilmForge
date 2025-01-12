@@ -15,10 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @AllArgsConstructor
 @RestController
@@ -65,7 +62,7 @@ public class UserController {
             }
 
             // Generisanje tokena za autentifikovanog korisnika
-            String token = jwtTokenProvider.createToken(authenticatedUser.getEmail(), List.of("USER"));
+            String token = jwtTokenProvider.createToken(authenticatedUser.getEmail(),authenticatedUser.getId(), List.of("USER"));
 
             // Log uspešne autentifikacije
             System.out.println("Authentication successful for email: " + authenticatedUser.getEmail());
@@ -120,15 +117,33 @@ public class UserController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<UserDTO>> searchUsers(@RequestParam String username) {
+    public ResponseEntity<?> searchUsers(@RequestParam String username) {
         try {
             List<UserDTO> users = userService.searchUsers(username);
+
+            if (users.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.OK).body(Collections.emptyList());
+            }
+
             return ResponseEntity.ok(users);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ArrayList<>());  // Ensure the response is always valid
+            e.printStackTrace();  // Logovanje za debagovanje
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    Map.of(
+                            "message", "An error occurred while searching for users.",
+                            "error", e.getMessage()
+                    )
+            );
         }
     }
+
+
+
+
+
+
+
+
 
     @GetMapping("/{id}/movies")
     public ResponseEntity<List<MovieDTO>> getUserMovies(@PathVariable Long id) {

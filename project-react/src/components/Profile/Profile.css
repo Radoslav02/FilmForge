@@ -51,8 +51,13 @@
     height: 30px;
     border: none;
     color: black;
-    background-color: #e3cb14;
+    background-color: #e1ca1c;
     border-radius: 5px;
+}
+
+.edit-on-button:hover{
+    background-color: #d0b802;
+    color: #000000;
 }
 
 .profile-edit{
@@ -89,8 +94,13 @@
     height: 30px;
     border: none;
     color: black;
-    background-color: #e3cb14;
+    background-color: #e1ca1c;
     border-radius: 5px;
+}
+
+.save-edit-button:hover{
+    background-color: #d0b802;
+    color: #000000;
 }
 
 .cancel-edit-button{

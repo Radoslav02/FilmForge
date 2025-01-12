@@ -56,4 +56,8 @@ public class Movie {
         }
         return grades.stream().mapToDouble(Grade::getValue).average().orElse(0.0);
     }
+
+    public void addGrade(Grade grade) {
+        grades.add(grade);
+    }
 }
