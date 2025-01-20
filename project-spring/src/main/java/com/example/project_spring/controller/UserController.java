@@ -137,14 +137,6 @@ public class UserController {
         }
     }
 
-
-
-
-
-
-
-
-
     @GetMapping("/{id}/movies")
     public ResponseEntity<List<MovieDTO>> getUserMovies(@PathVariable Long id) {
         try {

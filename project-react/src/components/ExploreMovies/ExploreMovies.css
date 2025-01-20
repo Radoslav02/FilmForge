@@ -1,0 +1,33 @@
+.explore-movies-container{
+  width: 100%;
+  min-height: 850px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  background-color: black;
+  color: white;
+  gap: 40px;
+  padding-bottom: 20px;
+
+}
+
+.explore-search-input{
+  width: 600px;
+  border-radius: 5px;
+  border: none;
+  padding-right: 30px;
+  background-color: #1c1b1d;
+  color: #c4b016;
+}
+
+.explore-search-bar{
+  position: relative;
+}
+
+.explore-search-icon{
+  position: absolute;
+  right: 5px;
+  color: black;
+  bottom: 5px;
+  
+}

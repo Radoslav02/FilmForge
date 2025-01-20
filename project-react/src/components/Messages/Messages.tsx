@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../Redux/store";
+import "./Messages.css";
+import SendIcon from "@mui/icons-material/Send";
 
 interface User {
   id: number;
@@ -17,10 +19,12 @@ interface Message {
 
 export default function Messages() {
   const [friends, setFriends] = useState<User[]>([]);
+  const [filteredFriends, setFilteredFriends] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [messageText, setMessageText] = useState<string>("");
+  const [searchText, setSearchText] = useState<string>("");
   const user = useSelector((state: RootState) => state.auth.user);
 
   useEffect(() => {
@@ -49,13 +53,14 @@ export default function Messages() {
             },
           }
         );
-        
+
         if (!response.ok) {
           throw new Error("Failed to fetch friends.");
         }
 
         const data = await response.json();
         setFriends(data);
+        setFilteredFriends(data);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching friends:", err);
@@ -65,6 +70,15 @@ export default function Messages() {
 
     fetchFriends();
   }, [user]);
+
+  useEffect(() => {
+    const lowercasedSearchText = searchText.toLowerCase();
+    setFilteredFriends(
+      friends.filter((friend) =>
+        friend.username.toLowerCase().includes(lowercasedSearchText)
+      )
+    );
+  }, [searchText, friends]);
 
   const fetchMessages = async (receiverId: number) => {
     const token = localStorage.getItem("jwtToken");
@@ -109,56 +123,95 @@ export default function Messages() {
     if (response.ok) {
       const newMessage = await response.json();
       setMessages((prevMessages) => [...prevMessages, newMessage]);
-      setMessageText(""); // Clear the input
+      setMessageText("");
     }
   };
 
   return (
-    <div>
-      <h2>Your Friends</h2>
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <ul>
-          {friends.length > 0 ? (
-            friends.map((friend) => (
-              <li key={friend.id} onClick={() => handleUserClick(friend)}>
-                {friend.username}
-              </li>
-            ))
+    <div className="message-container">
+      <h2 className="your-friends-title">Your Friends</h2>
+      <div className="chat-friends-wrapper">
+        <div className="friends-container">
+          <input
+            type="text"
+            placeholder="Search friends..."
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            className="friends-search"
+          />
+          {loading ? (
+            <p>Loading...</p>
           ) : (
-            <p>No friends found.</p>
-          )}
-        </ul>
-      )}
-
-      {selectedUser && (
-        <div>
-          <h3>Chat with {selectedUser.username}</h3>
-          <div>
-            <ul>
-              {messages.map((message) => (
-                <li key={message.id}>
-                  <strong>
-                  {message.senderId === (user?.id ?? -1) ? "You" : selectedUser?.username || "Unknown User"}:
-
-
-                  </strong>
-                  <p>{message.text}</p>
-                  <small>{new Date(message.sentDate).toLocaleTimeString()}</small>
-                </li>
-              ))}
+            <ul className="friends-ul">
+              {filteredFriends.length > 0 ? (
+                filteredFriends.map((friend) => (
+                  <li
+                    className="friend-li"
+                    key={friend.id}
+                    onClick={() => handleUserClick(friend)}
+                  >
+                    {friend.username}
+                  </li>
+                ))
+              ) : (
+                <p>No friends found.</p>
+              )}
             </ul>
-          </div>
-
-          <textarea
-            value={messageText}
-            onChange={(e) => setMessageText(e.target.value)}
-            placeholder="Type your message"
-          ></textarea>
-          <button onClick={handleSendMessage}>Send</button>
+          )}
         </div>
-      )}
+        {selectedUser && (
+          <div className="chat-container">
+            <h3 className="chat-title">Chat with {selectedUser.username}</h3>
+            <div>
+              <ul className="chat-ul">
+                {messages.map((message) => (
+                  <li
+                    className={`message-li ${
+                      message.senderId === (user?.id ?? -1)
+                        ? "my-message"
+                        : "friend-message"
+                    }`}
+                    key={message.id}
+                  >
+                    <strong>
+                      {message.senderId === (user?.id ?? -1)
+                        ? "You"
+                        : selectedUser?.username || "Unknown User"}
+                      :
+                    </strong>
+                    <p>{message.text}</p>
+                    <small>
+                      {new Date(message.sentDate).toLocaleTimeString()}
+                    </small>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div
+              className="send-message-wrapper"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSendMessage();
+                }
+              }}
+            >
+              <textarea
+                value={messageText}
+                onChange={(e) => setMessageText(e.target.value)}
+                placeholder="Type your message"
+                className="message-area"
+              ></textarea>
+              <div className="send-icon-wrapper">
+                <SendIcon
+                  className="send-icon"
+                  sx={{ fontSize: 25 }}
+                  onClick={handleSendMessage}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

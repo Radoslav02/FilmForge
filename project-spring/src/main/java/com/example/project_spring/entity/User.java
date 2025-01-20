@@ -42,11 +42,11 @@ public class User {
 
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<FriendRequest> sentRequests = new ArrayList<>();  // Requests sent by this user
+    private List<FriendRequest> sentRequests = new ArrayList<>();
 
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<FriendRequest> receivedRequests = new ArrayList<>();  // Requests received by this user
+    private List<FriendRequest> receivedRequests = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore

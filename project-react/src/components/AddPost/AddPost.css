@@ -20,10 +20,10 @@
 .add-post-form input {
   width: 200px;
   height: 30px;
-  background-color: #1c1b1d;
+  background-color: #1c1b1d !important;
   border: none;
   border-radius: 5px;
-  color: #c4b016;
+  color: #c4b016 !important;
 }
 
 .add-post-form textarea {
@@ -97,12 +97,15 @@
   width: 430px;
   height: 350px;
   object-fit: contain;
-  background-color: white;
+  background-color: #1c1b1d;
   border-radius: 5px;
 }
 
 .remove-image-button {
   width: 430px;
+  height: 30px;
+  border: none;
+  border-radius: 5px;
 }
 
 .add-post-button-wrapper {
@@ -131,3 +134,4 @@
   background-color: #d0b802;
   color: #000000;
 }
+

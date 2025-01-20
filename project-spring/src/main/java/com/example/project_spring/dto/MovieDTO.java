@@ -50,10 +50,19 @@ public class MovieDTO {
 
     }
 
-    private double calculateAverageGrade(Movie movie) {
-        return movie.getGrades().isEmpty()
-                ? 0.0
-                : movie.getGrades().stream().mapToInt(Grade::getValue).average().orElse(0.0);
+    public MovieDTO(Long id, String username, String title, String director, Date releaseDate, String description, Long categoryId, String imageUrl, String categoryName, double averageGrade) {
+        this.id = id;
+        this.username = username;
+        this.categoryId = categoryId;
+        this.description = description;
+        this.director = director;
+        this.releaseDate = releaseDate;
+        this.title = title;
+        this.imageUrl = imageUrl;
+        this.categoryName = categoryName;
+        this.averageGrade = averageGrade;
+
+
     }
 
 }

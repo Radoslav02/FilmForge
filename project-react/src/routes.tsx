@@ -11,9 +11,14 @@ import AddPost from "./components/AddPost/AddPost";
 import SearchedUserProfile from "./components/SearchedUserProfile/SearchedUserProfile";
 import ShowFriendRequests from "./components/ShowFriendRequest/ShowFriendRequests";
 import Messages from "./components/Messages/Messages";
- // Import UserProfile component
+import AdminPanel from "./components/AdminPanel/AdminPanel";
+import ExploreMovies from "./components/ExploreMovies/ExploreMovies";
+import Friends from "./components/Friends/Friends";
+import Favorites from "./components/Favorites/Favorites";
+import Recommendations from "./components/Recommendations/Recommendations";
 
 export const router = createHashRouter([
+  
   {
     path: "/",
     element: <App />,
@@ -61,6 +66,26 @@ export const router = createHashRouter([
       {
         path: "/messages", 
         element: <Messages />, 
+      },
+      {
+        path: "/admin-panel", 
+        element: <AdminPanel />, 
+      },
+      {
+        path: "/explore", 
+        element: <ExploreMovies />, 
+      },
+      {
+        path: "/friends", 
+        element: <Friends />, 
+      },
+      {
+        path: "/favorites", 
+        element: <Favorites />
+      },
+      {
+        path: "/recommendations", 
+        element: <Recommendations />
       }
     ],
   },

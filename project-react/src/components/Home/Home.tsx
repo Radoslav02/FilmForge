@@ -2,6 +2,12 @@ import { useEffect, useState } from "react";
 import "./Home.css";
 import { useSelector } from "react-redux";
 import { RootState } from "../Redux/store";
+import SaveToCollection from "../SaveToCollection/SaveToCollection";
+import RecommendMovie from "../RecommendMovie/RecommendMovie";
+import InsertCommentIcon from "@mui/icons-material/InsertComment";
+import CommentsDisabledIcon from "@mui/icons-material/CommentsDisabled";
+import BookmarkIcon from "@mui/icons-material/Bookmark";
+import SendIcon from "@mui/icons-material/Send";
 
 interface Movie {
   id: number;
@@ -39,8 +45,31 @@ export default function Home() {
   );
   const [feedback, setFeedback] = useState<string | null>(null);
   const user = useSelector((state: RootState) => state.auth.user);
+  const [showSaveToCollection, setShowSaveToCollection] = useState(false);
+  const [showFriends, setShowFriends] = useState(false);
+  const [currentMovieId, setCurrentMovieId] = useState<number | null>(null);
 
-  // Loading ratings from localStorage
+  const handleShowLists = () => {
+    setShowSaveToCollection(!showSaveToCollection);
+    document.body.style.overflow = "hidden";
+  };
+
+  const handleShowFriends = (movieId: number) => {
+    setCurrentMovieId(movieId);
+    setShowFriends(true);
+    document.body.style.overflow = "hidden";
+  };
+
+  const handleCloseFriends = () => {
+    setShowFriends(false);
+    document.body.style.overflow = "";
+  };
+
+  const handleClose = () => {
+    setShowSaveToCollection(false);
+    document.body.style.overflow = "";
+  };
+
   useEffect(() => {
     const storedRatings = JSON.parse(
       localStorage.getItem("movieRatings") || "{}"
@@ -48,7 +77,6 @@ export default function Home() {
     setRating(storedRatings);
   }, []);
 
-  // Fetching categories
   useEffect(() => {
     const token = localStorage.getItem("jwtToken");
 
@@ -77,7 +105,6 @@ export default function Home() {
     fetchCategories();
   }, []);
 
-  // Fetching movies by friends
   useEffect(() => {
     const token = localStorage.getItem("jwtToken");
 
@@ -118,7 +145,6 @@ export default function Home() {
     fetchMoviesByFriends();
   }, [user?.id]);
 
-  // Fetch comments for a specific movie
   const fetchCommentsForMovies = async (movies: Movie[]) => {
     const token = localStorage.getItem("jwtToken");
 
@@ -284,77 +310,153 @@ export default function Home() {
           </button>
         ))}
       </div>
-      <div className="movies-list">
-        <h1 className="home-page-title">Movies by Friends</h1>
-        {feedback && <p className="feedback">{feedback}</p>}
-        {filteredMovies.map((movie, index) => (
-          <div key={index} className="movie-item">
-            <div className="home-movie-info-wrapper">
-              <h3 className="movie-username">{movie.username}</h3>
-              <p>
-                Release Date: {new Date(movie.releaseDate).toLocaleDateString()}
-              </p>
-              <p>Title: {movie.title}</p>
-              <p>Director: {movie.director}</p>
-              <p>Category: {movie.categoryName}</p>
-              <p>Average Rating: {movie.averageGrade.toFixed(2)}</p>
-              <div className="desc-wrapper">
-                <p className="desc-p">
-                  {expandedDescription === movie.id
-                    ? movie.description
-                    : `${movie.description.slice(0, 174)}`}
+      {!user ? (
+        <div>
+          <h3>Login or Register to see home page</h3>
+        </div>
+      ) : (
+        <div className="movies-list">
+          <h1 className="home-page-title">Movies by Friends</h1>
+          {feedback && <p className="feedback">{feedback}</p>}
+          {filteredMovies.map((movie, index) => (
+            <div key={index} className="movie-item">
+              <div className="home-movie-info-wrapper">
+                <h3 className="movie-username">{movie.username}</h3>
+                <p>
+                  Release Date:{" "}
+                  {new Date(movie.releaseDate).toLocaleDateString()}
                 </p>
-                {movie.description.length > 174 && (
-                  <button
-                    className="view-more"
-                    onClick={() => handleViewMore(movie.id)}
-                  >
+                <p>Title: {movie.title}</p>
+                <p>Director: {movie.director}</p>
+                <p>Category: {movie.categoryName}</p>
+                <p>Average Rating: {movie.averageGrade.toFixed(2)}</p>
+                <div className="desc-wrapper">
+                  <p className="desc-p">
                     {expandedDescription === movie.id
-                      ? "View Less"
-                      : "View More"}
-                  </button>
-                )}
-              </div>
-            </div>
-            {movie.imageUrl && (
-              <img
-                src={`http://localhost:8080${movie.imageUrl}`}
-                alt={`${movie.title} Poster`}
-                className="movie-image"
-              />
-            )}
-            <div className="rating-comment-wrapper">
-              <div className="rating-wrapper">
-                <div className="rating-buttons">
-                  {[1, 2, 3, 4, 5].map((val) => (
+                      ? movie.description
+                      : `${movie.description.slice(0, 174)}`}
+                  </p>
+                  {movie.description.length > 174 && (
                     <button
-                      key={val}
-                      className={`star-button ${
-                        rating[movie.id] >= val ? "selected" : ""
-                      }`}
-                      onClick={() => handleRatingChange(movie.id, val)}
-                      aria-label={`Rate this movie ${val} stars`}
+                      className="view-more"
+                      onClick={() => handleViewMore(movie.id)}
                     >
-                      ★
+                      {expandedDescription === movie.id
+                        ? "View Less"
+                        : "View More"}
                     </button>
-                  ))}
+                  )}
                 </div>
               </div>
+              {movie.imageUrl && (
+                <img
+                  src={`http://localhost:8080${movie.imageUrl}`}
+                  alt={`${movie.title} Poster`}
+                  className="movie-image"
+                />
+              )}
+              <div className="rating-comment-wrapper">
+                <div className="rating-wrapper">
+                  <div className="rating-buttons">
+                    {[1, 2, 3, 4, 5].map((val) => (
+                      <button
+                        key={val}
+                        className={`star-button ${
+                          rating[movie.id] >= val ? "selected" : ""
+                        }`}
+                        onClick={() => handleRatingChange(movie.id, val)}
+                        aria-label={`Rate this movie ${val} stars`}
+                      >
+                        ★
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="post-buttons-wrapper">
+                  <div className="list-names-container">
+                    <BookmarkIcon
+                      sx={{ fontSize: 30 }}
+                      className="post-button-icon"
+                      onClick={handleShowLists}
+                    />
 
-              <div className="comments-section">
-                <button
-                  className="comments-toggle-button"
-                  onClick={() =>
-                    setExpandedDescription(
-                      expandedDescription === movie.id ? null : movie.id
-                    )
-                  }
-                >
-                  {expandedDescription === movie.id
-                    ? "Close"
-                    : "Comments"}
-                </button>
-              </div>
+                    {showSaveToCollection && (
+                      <>
+                        <div
+                          className="list-overlay"
+                          onClick={handleClose}
+                        ></div>
+                        <div className="floating-container">
+                          <h2>Save to:</h2>
+                          <button
+                            className="close-button"
+                            onClick={handleClose}
+                          >
+                            &times;
+                          </button>
+                          <SaveToCollection
+                            movieId={movie.id}
+                            userId={user.id}
+                          />
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  <div className="friends-list-container">
+                    <SendIcon
+                      className="post-button-icon"
+                      sx={{ fontSize: 30 }}
+                      onClick={() => handleShowFriends(movie.id)}
+                    />
+                    {showFriends && (
+                      <>
+                        <div
+                          className="friends-list-overlay"
+                          onClick={handleCloseFriends}
+                        ></div>
+                        <div className="friends-floating-container">
+                          <h2>Send to:</h2>
+                          <button
+                            className="close-button"
+                            onClick={handleCloseFriends}
+                          >
+                            &times;
+                          </button>
+                          {currentMovieId !== null && (
+                            <RecommendMovie
+                              movieId={currentMovieId}
+                              recommenderId={user.id}
+                            />
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  <div className="comments-section">
+                    <button
+                      className="comments-toggle-button"
+                      onClick={() =>
+                        setExpandedDescription(
+                          expandedDescription === movie.id ? null : movie.id
+                        )
+                      }
+                    >
+                      {expandedDescription === movie.id ? (
+                        <CommentsDisabledIcon
+                          className="post-button-icon"
+                          sx={{ fontSize: 30 }}
+                        />
+                      ) : (
+                        <InsertCommentIcon
+                          className="post-button-icon"
+                          sx={{ fontSize: 30 }}
+                        />
+                      )}
+                    </button>
+                  </div>
+                </div>
               </div>
               {expandedDescription === movie.id && (
                 <div className="comments-block">
@@ -380,15 +482,18 @@ export default function Home() {
                     className="add-comment-area"
                     placeholder="Add a comment..."
                   />
-                  <button className="add-comment-button" onClick={() => handleAddComment(movie.id)}>
+                  <button
+                    className="add-comment-button"
+                    onClick={() => handleAddComment(movie.id)}
+                  >
                     Add Comment
                   </button>
                 </div>
               )}
-            
-          </div>
-        ))}
-      </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

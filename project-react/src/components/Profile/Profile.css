@@ -1,5 +1,5 @@
 .profile-page-container {
-  height: 850px;
+  min-height: 850px;
   width: 100%;
   padding: 50px;
   display: flex;
@@ -10,104 +10,217 @@
   color: white;
 }
 
-.profile-info-container{
-    display: flex;
-    gap: 100px;
+.profile-info-container {
+  display: flex;
+  gap: 100px;
 }
 
-.profile-info{
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    width: 240px;
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 240px;
 }
 
-.profile-wrapper{
-    display: flex;
-    flex-direction: column;
+.profile-wrapper {
+  display: flex;
+  flex-direction: column;
 }
 
-.profile-info label{
-    font-size: 15px;
+.profile-info label {
+  font-size: 15px;
 }
 
-.profile-button-wrapper{
-    width: 600px;
-    display: flex;
-    justify-content: space-between;
+.profile-button-wrapper {
+  width: 600px;
+  display: flex;
+  justify-content: space-between;
 }
 
-.logout-button{
-    width: 250px;
-    height: 30px;
-    border: 1px solid black;
-    color: black;
-    background-color: white;
-    border-radius: 5px;
+.logout-button {
+  width: 250px;
+  height: 30px;
+  border: 1px solid black;
+  color: black;
+  background-color: white;
+  border-radius: 5px;
 }
 
-.edit-on-button{
-    width: 250px;
-    height: 30px;
-    border: none;
-    color: black;
-    background-color: #e1ca1c;
-    border-radius: 5px;
+.edit-on-button {
+  width: 250px;
+  height: 30px;
+  border: none;
+  color: black;
+  background-color: #e1ca1c;
+  border-radius: 5px;
 }
 
-.edit-on-button:hover{
-    background-color: #d0b802;
-    color: #000000;
+.edit-on-button:hover {
+  background-color: #d0b802;
+  color: #000000;
 }
 
-.profile-edit{
-    display: flex;
-    gap: 150px;
+.profile-edit {
+  display: flex;
+  gap: 150px;
 }
 
-.edit-container{
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
+.edit-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
 }
 
-.edit-wrapper{
-    display: flex;
-    flex-direction: column;
+.edit-wrapper {
+  display: flex;
+  flex-direction: column;
 }
 
-.edit-wrapper input{
-    width: 250px;
-    height: 30px;
-    border-radius: 5px;
-    border: none;
+.edit-wrapper input {
+  background-color: #252525;
+  color: #c4b016;
+  width: 250px;
+  height: 30px;
+  border-radius: 5px;
+  border: none;
 }
 
-.edit-buttons-wrapper{
-    width: 650px;
-    display: flex;
-    justify-content: space-between;
+.edit-buttons-wrapper {
+  width: 650px;
+  display: flex;
+  justify-content: space-between;
 }
 
-.save-edit-button{
-    width: 250px;
-    height: 30px;
-    border: none;
-    color: black;
-    background-color: #e1ca1c;
-    border-radius: 5px;
+.save-edit-button {
+  width: 250px;
+  height: 30px;
+  border: none;
+  color: black;
+  background-color: #e1ca1c;
+  border-radius: 5px;
 }
 
-.save-edit-button:hover{
-    background-color: #d0b802;
-    color: #000000;
+.save-edit-button:hover {
+  background-color: #d0b802;
+  color: #000000;
 }
 
-.cancel-edit-button{
-    width: 250px;
-    height: 30px;
-    border: 1px solid black;
-    color: black;
-    background-color: white;
-    border-radius: 5px;
+.cancel-edit-button {
+  width: 250px;
+  height: 30px;
+  border: 1px solid black;
+  color: black;
+  background-color: white;
+  border-radius: 5px;
+}
+
+.profile-page-movies-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.profile-movie-card {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  width: 600px;
+  min-height: 550px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #c4b016;
+  border-radius: 10px;
+  color: #c4b016;
+}
+
+.profile-page-movie-info-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  color: white;
+}
+
+.profile-page-desc-wrapper {
+  position: relative;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+}
+
+.profile-page-desc-p {
+  word-break: break-word;
+  width: 100%;
+  color: white;
+}
+
+.profile-page-movie-image {
+  width: 100%;
+  height: 400px;
+  object-fit: contain;
+  border-left: #c4b016;
+  border-left: #c4b016;
+  background-color: #252525;
+}
+
+.profile-page-view-more {
+  border: none;
+  background: none;
+  color: #c4b016;
+  position: absolute;
+  right: 0px;
+  bottom: -10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.movies-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.edit-movie-button {
+  width: 50px;
+  height: 20px;
+  background: none;
+  border: none;
+  color: #c4b016;
+}
+
+.edit-movie-button:hover {
+  background-color: #c4b016;
+  color: #000000;
+  border-radius: 5px;
+}
+
+.post-button-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.delete-movie-button {
+  width: 25px;
+  background: none;
+  border: none;
+  color: #c4b016;
+}
+
+.delete-movie-button:hover {
+  background-color: #c4b016;
+  color: #000000;
+  border-radius: 10px;
+}
+
+
+.profile-page-container h1{
+  color: #c4b016;
+}
+
+.movies-section h2{
+  color: #c4b016;
 }

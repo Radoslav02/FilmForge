@@ -32,7 +32,7 @@ public class Movie {
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "user_id", nullable = false)
-    private User user; // This is the association with the logged-in user
+    private User user;
 
 
     private String description;
@@ -57,7 +57,5 @@ public class Movie {
         return grades.stream().mapToDouble(Grade::getValue).average().orElse(0.0);
     }
 
-    public void addGrade(Grade grade) {
-        grades.add(grade);
-    }
+
 }

@@ -17,11 +17,17 @@
 }
 
 .request-li {
+  width: 450px;
+  border: none;
+  border-radius: 5px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
-
-  padding: 10px;
+  justify-content: space-between;
+  background-color: black;
+  color: #c4b016;
+  border: 1px solid #c4b016;
+  gap: 10px;
 }
 
 .friend-request-page-title {
@@ -48,6 +54,10 @@
   color: #000000;
 }
 
+.accept-request-button:hover{
+  background-color: #e1ca1c;
+}
+
 .decline-request-button {
   width: 100px;
   height: 30px;
@@ -57,6 +67,14 @@
   border-radius: 5px;
 }
 
+.decline-request-button:hover{
+  background-color: rgb(169, 168, 168)
+}
+
 .from-p{
     font-weight: bold;
+}
+
+.request-info-wrapper{
+  color: white;
 }

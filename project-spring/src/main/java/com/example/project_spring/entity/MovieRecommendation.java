@@ -1,5 +1,6 @@
 package com.example.project_spring.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -30,6 +31,7 @@ public class MovieRecommendation {
     @ManyToOne
     @JoinColumn(name = "movie_id")
     private Movie movie;
+
 
     private Date recommendationDate;
 }

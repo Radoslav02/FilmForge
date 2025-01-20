@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { login } from "../Redux/authSlice";
 
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -12,7 +13,7 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      // Logovanje unetih podataka pre slanja na backend
+      
       console.log("Login data being sent:", { email, password });
 
       const response = await fetch("http://localhost:8080/api/users/login", {
@@ -23,7 +24,7 @@ export default function Login() {
         body: JSON.stringify({ email, password }),
       });
 
-      // Logovanje HTTP statusa odgovora
+    
       console.log("Response status:", response.status);
 
       if (!response.ok) {
@@ -45,7 +46,7 @@ export default function Login() {
         isAdmin,
       } = await response.json();
 
-      // Logovanje odgovora sa servera
+
       console.log("Response data:", {
         token,
         email: responseEmail,
@@ -55,7 +56,7 @@ export default function Login() {
         isAdmin,
       });
 
-      // Čuvanje tokena u localStorage
+     
       localStorage.setItem("jwtToken", token);
 
       
@@ -73,7 +74,8 @@ export default function Login() {
           number,
         })
       );
-
+      
+      
       navigate("/profile");
     } catch (error: any) {
     

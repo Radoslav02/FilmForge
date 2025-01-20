@@ -5,10 +5,7 @@ import com.example.project_spring.dto.MovieDTO;
 import com.example.project_spring.entity.*;
 import com.example.project_spring.exception.ResourceNotFoundException;
 import com.example.project_spring.mapper.MovieMapper;
-import com.example.project_spring.repository.CategoryRepository;
-import com.example.project_spring.repository.CommentRepository;
-import com.example.project_spring.repository.MovieRepository;
-import com.example.project_spring.repository.UserRepository;
+import com.example.project_spring.repository.*;
 import com.example.project_spring.service.MovieService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -16,10 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -34,6 +29,7 @@ public class MovieServiceImp implements MovieService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final CommentRepository commentRepository;
+
 
     @Transactional
     @Override
@@ -192,8 +188,6 @@ public class MovieServiceImp implements MovieService {
         return comment;  // Return the saved comment object
     }
 
-
-
     @Transactional
     public List<CommentDTO> getCommentsByMovie(Long movieId) {
         Movie movie = movieRepository.findById(movieId)
@@ -206,6 +200,69 @@ public class MovieServiceImp implements MovieService {
         return commentDTOs;
     }
 
+    @Transactional
+    public void updateMovie(MovieDTO movieDTO, MultipartFile image, Long userId) {
+        Movie movie = movieRepository.findById(movieDTO.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Movie not found with id: " + movieDTO.getId()));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+
+        Category category = categoryRepository.findById(movieDTO.getCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + movieDTO.getCategoryId()));
+
+        movie.setTitle(movieDTO.getTitle());
+        movie.setDirector(movieDTO.getDirector());
+        movie.setReleaseDate(movieDTO.getReleaseDate());
+        movie.setDescription(movieDTO.getDescription());
+        movie.setCategory(category);
+        movie.setUser(user);
+
+        if (image != null && !image.isEmpty()) {
+            try {
+                String fileName = UUID.randomUUID() + "_" + image.getOriginalFilename();
+                Path uploadPath = Paths.get("uploads/user_" + userId);
+                Files.createDirectories(uploadPath);
+                Path filePath = uploadPath.resolve(fileName);
+                Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+                movie.setImageUrl("/uploads/user_" + userId + "/" + fileName);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to save image", e);
+            }
+        }
+
+        movieRepository.save(movie);
+    }
+
+    @Transactional
+    public void deleteMovie(Long movieId) {
+        Movie movie = movieRepository.findById(movieId)
+                .orElseThrow(() -> new ResourceNotFoundException("Movie not found with id: " + movieId));
+
+        movieRepository.delete(movie);
+    }
+
+
+    @Transactional
+    public List<MovieDTO> getAllMovies() {
+        List<Movie> movies = movieRepository.findAll();
+
+        return movies.stream()
+                .map(movie -> new MovieDTO(
+                        movie.getId(),
+                        movie.getUser().getUsername(),
+                        movie.getTitle(),
+                        movie.getDirector(),
+                        movie.getReleaseDate(),
+                        movie.getDescription(),
+                        movie.getCategory().getId(),
+                        movie.getImageUrl(),
+                        movie.getCategory().getName(),
+                        movie.getAverageGrade()
+                ))
+                .collect(Collectors.toList());
+    }
 
 
 }

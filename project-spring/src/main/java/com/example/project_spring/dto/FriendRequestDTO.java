@@ -1,22 +1,40 @@
 package com.example.project_spring.dto;
 
 import com.example.project_spring.entity.FriendRequest;
-import com.example.project_spring.mapper.UserMapper;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NoArgsConstructor;
+
 
 import java.util.Date;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class FriendRequestDTO {
     private Long id;
     private Long senderId;
     private Long receiverId;
     private boolean accepted;
     private Date requestDate;
-    private String senderName; // Add sender's name
-    private String senderSurname; // Add sender's surname
-    private String senderUsername; // Add sender's username
+    private String senderName;
+    private String senderSurname;
+    private String senderUsername;
+    private Long friendId;
+
+    public FriendRequestDTO(Long id, Long senderId, Long receiverId, Date requestDate, String senderUsername, String senderName, String senderSurname, Long friendId) {
+        this.id = id;
+        this.senderId = senderId;
+        this.receiverId = receiverId;
+        this.requestDate = requestDate;
+        this.senderUsername = senderUsername;
+        this.senderName = senderName;
+        this.senderSurname = senderSurname;
+        this.friendId = friendId;
+    }
+
+
 
     public FriendRequestDTO(FriendRequest request) {
         this.id = request.getId();
@@ -25,17 +43,11 @@ public class FriendRequestDTO {
         this.accepted = request.isAccepted();
         this.requestDate = request.getRequestDate();
 
-        // Check if sender is not null before accessing properties
+
         if (request.getSender() != null) {
             this.senderName = request.getSender().getFirstName();
             this.senderSurname = request.getSender().getLastName();
             this.senderUsername = request.getSender().getUsername();
         }
-    }
-
-
-
-    public FriendRequestDTO() {
-        // Default constructor, just in case
     }
 }

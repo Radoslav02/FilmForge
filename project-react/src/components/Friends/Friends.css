@@ -1,0 +1,49 @@
+.friends-page-container{
+    width: 100%;
+    min-height: 850px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    background-color: black;
+    color: white;
+    gap: 30px;
+    padding: 30px;
+}
+
+.friends-container h1{
+    color: #c4b016;
+}
+
+.friends-list{
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+    list-style: none;
+}
+
+.friend-item{
+    width: 450px;
+    border: none;
+    border-radius: 5px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: black;
+    color: #c4b016;
+    border: 1px solid #c4b016;
+}
+
+.friend-item p{
+    color: white;
+}
+
+
+.delete-friend-item{
+    cursor: pointer;
+}
+
+.delete-friend-item:hover{
+    color: #fff319;
+}
+

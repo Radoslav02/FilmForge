@@ -105,7 +105,7 @@ const ShowFriendRequests = () => {
   return (
     <div className='friend-request-container'>
       {error && <p className="error-message">{error}</p>}
-      <h2 className="friend-request-page-title">Friend Requests</h2>
+      <h1 className="friend-request-page-title">Friend Requests</h1>
       {receivedRequests.length === 0 ? (
         <p>No received requests.</p>
       ) : (
@@ -113,8 +113,10 @@ const ShowFriendRequests = () => {
           {receivedRequests.map((request: any) => (
             <li className="request-li" key={request.id}>
               <p className="from-p">{request.senderName} {request.senderSurname} ({request.senderUsername})</p>
+              <div className="request-info-wrapper">
               <p>{new Date(request.requestDate).toLocaleString()}</p>
               <p>Hi there! Do you want to be my friend?</p>
+              </div>
               {!request.accepted && (
                 <div className="friend-request-button-wrapper">
                   <button className="accept-request-button" onClick={() => handleAcceptRequest(request.id)}>Accept</button>

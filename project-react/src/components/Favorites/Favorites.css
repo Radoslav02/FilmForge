@@ -1,0 +1,149 @@
+.favorites-container{
+    width: 100%;
+    min-height: 850px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    background-color: black;
+    color: white;
+    gap: 50px;
+    padding: 30px;
+}
+
+.favorites-title{
+    color: #c4b016;
+}
+
+.create-form-group{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.create-form-group input{
+    width: 200px;
+    height: 35px;
+    background-color: #1c1b1d;
+    border: none;
+    border-radius: 5px;
+    color: #c4b016;
+}
+
+.create-form-group button{
+    width: 200px;
+    height: 30px;
+    background-color: #c4b016;
+    color: black;
+    border: none;
+    border-radius: 5px;
+}
+
+.favorite-movies-lists{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 50px;
+}
+
+.create-list-form{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+}
+
+.create-list-form input{
+    width: 200px;
+    height: 35px;
+    background-color: #1c1b1d;
+    border: none;
+    color: #c4b016;
+    border-radius: 5px;
+}
+
+.create-list-form button{
+    width: 200px;
+    height: 30px;
+    border: none;
+    border-radius: 5px;
+    background-color: #c4b016;
+    color: black;
+}
+
+.create-list-form button:hover{
+    background-color: #ffe940;
+}
+
+.favorite-movie-list-item{
+    min-width: 250px;
+    min-height: 250px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    border: 1px solid #c4b016;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.list-movies-list{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.list-name{
+    color: #c4b016;
+}
+
+.edit-list-wrapper{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.edit-list-button-wrapper{
+    display: flex;
+    gap: 15px;
+}
+
+.delete-list-button{
+    border: none;
+    background: none;
+    color: #c4b016;
+    width: 15px;
+}
+
+.delete-list-button:hover{
+    background-color: #c4b016;
+    color: black;
+    border-radius: 5px;
+    width: 15px;
+}
+
+.edit-list-button{
+    border: none;
+    background: none;
+    color: #c4b016;
+    width: 30px;
+}
+
+.edit-list-button:hover{
+    background-color: #c4b016;
+    color: black;
+    border-radius: 5px;
+    width: 30px;
+}
+
+.list-movie-item{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.remove-movie-from-list{
+    color: #c4b016;
+}
+
+.remove-movie-from-list:hover{
+    color: #ffe940;
+}

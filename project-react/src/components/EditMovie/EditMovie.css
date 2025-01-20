@@ -1,0 +1,99 @@
+.edit-movie-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.edit-post-form {
+  width: 520px;
+  min-height: 500px;
+  border: 1px solid #e1ca1c;
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+}
+
+.edit-post-form-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.edit-post-form-wrapper input {
+  width: 200px;
+  height: 30px;
+  border: none;
+  border-radius: 5px;
+  background-color: #1c1b1d;
+  color: #e1ca1c;
+}
+
+.edit-post-form-wrapper label {
+  color: #e1ca1c;
+}
+
+.edit-post-form-wrapper select {
+  width: 200px;
+  height: 30px;
+  border: none;
+  border-radius: 5px;
+  background-color: #1c1b1d;
+  color: #e1ca1c;
+}
+
+.edit-post-form-wrapper textarea {
+  width: 480px;
+  height: 250px;
+  background-color: #1c1b1d;
+  border: none;
+  border-radius: 5px;
+  color: #c4b016;
+  padding: 10px;
+}
+
+.edit-post-pair {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.edit-post-image-preview {
+  display: flex;
+  justify-content: center;
+  background-color: #1c1b1d;
+  border-radius: 5px;
+}
+
+.edit-post-image {
+  width: 430px !important;
+  height: 350px !important;
+  object-fit: contain;
+  background-color: #1c1b1d;
+  border-radius: 5px;
+}
+
+.edit-post-button-wrapper {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0px;
+}
+
+.cancel-edit-movie {
+  width: 200px;
+  height: 30px;
+  border-radius: 5px;
+  border: none;
+}
+
+.save-edit-movie {
+  width: 200px;
+  height: 30px;
+  background-color: #e1ca1c;
+  border: none;
+  color: black;
+  border-radius: 5px;
+}

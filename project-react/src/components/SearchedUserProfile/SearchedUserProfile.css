@@ -83,3 +83,14 @@
     background-color: #d0b802;
     color: #000000;
 }
+
+.view-more {
+  border: none;
+  background: none;
+  color: #c4b016;
+  position: absolute;
+  right: 0px;
+  bottom: -10px;
+  font-size: 12px;
+  cursor: pointer;
+}
