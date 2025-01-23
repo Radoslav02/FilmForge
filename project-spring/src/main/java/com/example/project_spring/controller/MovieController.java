@@ -13,8 +13,12 @@ import com.example.project_spring.repository.MovieRepository;
 import com.example.project_spring.service.impl.MovieServiceImp;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperPrint;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -140,4 +144,36 @@ public class MovieController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
+
+    @GetMapping("/generateReport")
+    public ResponseEntity<byte[]> generateMovieReport() {
+        try {
+            // Pozovi servis za generisanje izveštaja
+            JasperPrint jasperPrint = movieService.generateTop10MoviesReport();
+
+            // Proveri da li je JasperPrint popunjen
+            if (jasperPrint.getPages().isEmpty()) {
+                throw new RuntimeException("Generated report has no pages.");
+            }
+
+            // Generiši PDF
+            byte[] pdfReport = JasperExportManager.exportReportToPdf(jasperPrint);
+
+            // Postavi zaglavlja za preuzimanje PDF fajla
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("inline", "MoviesReport.pdf");
+
+            // Vraća odgovor sa PDF fajlom
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(pdfReport);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        }
+    }
+
+
 }

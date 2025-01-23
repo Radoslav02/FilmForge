@@ -2,6 +2,7 @@ package com.example.project_spring.controller;
 
 import com.example.project_spring.dto.CategoryDTO;
 import com.example.project_spring.entity.Category;
+import com.example.project_spring.exception.ResourceNotFoundException;
 import com.example.project_spring.service.CategoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -39,10 +40,22 @@ public class CategoryController {
     }
 
     //Build Update Category REST API
-    @PutMapping("{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<CategoryDTO> updateCategory(@PathVariable("id") Long categoryId, @RequestBody CategoryDTO updatedCategory) {
         CategoryDTO categoryDTO = categoryService.updateCategory(categoryId, updatedCategory);
         return ResponseEntity.ok(categoryDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteCategory(@PathVariable("id") Long categoryId) {
+        try {
+            categoryService.deleteCategory(categoryId);
+            return ResponseEntity.ok("Category deleted successfully.");
+        } catch (ResourceNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while deleting the category.");
+        }
     }
 
 

@@ -68,6 +68,7 @@ public class WebSecurityConfig {
                                 .requestMatchers("/api/movie/getAllMovies").permitAll()
                                 .requestMatchers("/uploads/**").permitAll()
                                 .requestMatchers("api/favorite-movies/add-movie/").permitAll()
+                                .requestMatchers("api/movie/generateReport").authenticated()
                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                                 .anyRequest().authenticated()
                 )

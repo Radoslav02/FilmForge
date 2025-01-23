@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.ReadOnlyFileSystemException;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,8 +24,8 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {
 
         Category category = CategoryMapper.mapToCategory(categoryDTO);
+        category.setCreationDate(new Date());
         Category savedCategory = categoryRepository.save(category);
-
 
         return CategoryMapper.mapToCategoryDTO(savedCategory);
     }

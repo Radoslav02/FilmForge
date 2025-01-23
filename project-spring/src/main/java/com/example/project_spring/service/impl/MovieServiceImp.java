@@ -9,15 +9,17 @@ import com.example.project_spring.repository.*;
 import com.example.project_spring.service.MovieService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.*;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 // MovieServiceImp
@@ -263,6 +265,59 @@ public class MovieServiceImp implements MovieService {
                 ))
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public JasperPrint generateTop10MoviesReport() {
+        try {
+            // Učitaj i kompajliraj .jrxml fajl
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("jasperreports/MoviesReport.jrxml");
+            if (inputStream == null) {
+                throw new FileNotFoundException("Report template 'MoviesReport.jrxml' not found.");
+            }
+            JasperReport jasperReport = JasperCompileManager.compileReport(inputStream);
+
+            // Pripremi podatke
+            List<Movie> movies = movieRepository.findAll();
+            if (movies.isEmpty()) {
+                throw new RuntimeException("No movies found in the database.");
+            }
+
+            // Izaberi 10 najbolje ocenjenih filmova
+            List<MovieDTO> topMovies = movies.stream()
+                    .sorted(Comparator.comparingDouble(Movie::getAverageGrade).reversed())
+                    .limit(10)
+                    .map(movie -> new MovieDTO(
+                            movie.getCategory().getName(),
+                            movie.getTitle(),
+                            movie.getDirector(),
+                            movie.getReleaseDate(),
+                            movie.getAverageGrade()
+                    ))
+                    .collect(Collectors.toList());
+
+            if (topMovies.isEmpty()) {
+                throw new RuntimeException("No top movies to include in the report.");
+            }
+
+
+
+            // Pripremi DataSource
+            JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(topMovies);
+
+            // Parametri izveštaja
+            Map<String, Object> parameters = new HashMap<>();
+
+            // Popuni izveštaj podacima
+            return JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error generating report: " + e.getMessage(), e);
+        }
+    }
+
+
+
+
 
 
 }

@@ -195,6 +195,7 @@
   background-color: #c4b016;
   color: #000000;
   border-radius: 5px;
+  cursor: pointer;
 }
 
 .post-button-wrapper {
@@ -214,6 +215,7 @@
   background-color: #c4b016;
   color: #000000;
   border-radius: 10px;
+  cursor: pointer;
 }
 
 
@@ -223,4 +225,20 @@
 
 .movies-section h2{
   color: #c4b016;
+}
+
+.profile-buttons-wrapper{
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.profile-button-icon:hover{
+  color: #ffea4d;
+  cursor: pointer;
+}
+
+.profile-button-icon{
+  color: #c4b016;
+  cursor: pointer;
 }

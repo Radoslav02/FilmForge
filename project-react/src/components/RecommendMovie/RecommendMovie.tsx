@@ -5,7 +5,7 @@ import "./RecommendMovie.css";
 
 interface RecommendMovieProps {
   movieId: number;
-  recommenderId: number;
+  recommenderId: number | undefined;
 }
 
 interface FriendRequestDTO {

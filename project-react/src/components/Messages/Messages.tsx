@@ -129,7 +129,7 @@ export default function Messages() {
 
   return (
     <div className="message-container">
-      <h2 className="your-friends-title">Your Friends</h2>
+      <h1 className="your-friends-title">Inbox</h1>
       <div className="chat-friends-wrapper">
         <div className="friends-container">
           <input

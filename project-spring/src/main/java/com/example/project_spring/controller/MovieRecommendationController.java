@@ -2,6 +2,7 @@ package com.example.project_spring.controller;
 
 import com.example.project_spring.dto.MovieDTO;
 import com.example.project_spring.dto.MovieRecommendationDTO;
+import com.example.project_spring.dto.RecommendedMovieDTO;
 import com.example.project_spring.service.impl.MovieRecommendationServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -32,8 +33,8 @@ public class MovieRecommendationController {
     }
 
     @GetMapping("/getRecommendations/{receiverId}")
-    public ResponseEntity<List<MovieDTO>> getRecommendations(@PathVariable Long receiverId) {
-        List<MovieDTO> recommendations = movieRecommendationServiceImpl.getRecommendations(receiverId);
+    public ResponseEntity<List<RecommendedMovieDTO>> getRecommendations(@PathVariable Long receiverId) {
+        List<RecommendedMovieDTO> recommendations = movieRecommendationServiceImpl.getRecommendations(receiverId);
         return ResponseEntity.ok(recommendations);
     }
 }

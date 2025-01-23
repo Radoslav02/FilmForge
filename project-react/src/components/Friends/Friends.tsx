@@ -70,7 +70,7 @@ export default function Friends() {
       );
 
       if (response.ok) {
-        // Nakon uspešnog brisanja, ukloni prijateljski zahtev iz liste
+      
         setFriends(friends.filter(friend => friend.id !== requestId));
       } else {
         throw new Error("Failed to delete friend request.");

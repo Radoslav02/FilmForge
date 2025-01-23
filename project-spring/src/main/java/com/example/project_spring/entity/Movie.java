@@ -49,6 +49,8 @@ public class Movie {
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Grade> grades = new ArrayList<>();
 
+
+
     // Method to calculate average grade
     public double getAverageGrade() {
         if (grades.isEmpty()) {

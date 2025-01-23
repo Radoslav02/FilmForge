@@ -2,6 +2,7 @@ package com.example.project_spring.service.impl;
 
 import com.example.project_spring.dto.MovieDTO;
 import com.example.project_spring.dto.MovieRecommendationDTO;
+import com.example.project_spring.dto.RecommendedMovieDTO;
 import com.example.project_spring.entity.Movie;
 import com.example.project_spring.entity.MovieRecommendation;
 import com.example.project_spring.entity.User;
@@ -69,7 +70,7 @@ public class MovieRecommendationServiceImpl implements MovieRecommendationServic
     }
 
     @Override
-    public List<MovieDTO> getRecommendations(Long receiverId) {
+    public List<RecommendedMovieDTO> getRecommendations(Long receiverId) {
         userRepository.findById(receiverId)
                 .orElseThrow(() -> new ResourceNotFoundException("Receiver not found"));
 
@@ -77,7 +78,8 @@ public class MovieRecommendationServiceImpl implements MovieRecommendationServic
         return recommendations.stream()
                 .map(recommendation -> {
                     Movie movie = recommendation.getMovie();
-                    return new MovieDTO(
+                    String senderName = recommendation.getRecommender().getUsername();
+                    return new RecommendedMovieDTO(
                             movie.getId(),
                             movie.getUser().getUsername(),
                             movie.getTitle(),
@@ -87,7 +89,8 @@ public class MovieRecommendationServiceImpl implements MovieRecommendationServic
                             movie.getCategory().getId(),
                             movie.getImageUrl(),
                             movie.getCategory().getName(),
-                            movie.getAverageGrade()
+                            movie.getAverageGrade(),
+                            senderName
                     );
                 })
                 .toList();

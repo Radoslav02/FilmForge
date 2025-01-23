@@ -110,7 +110,7 @@ const ExploreMovies: React.FC = () => {
           </button>
         ))}
       </div>
-
+      <h1 className="explore-page-title">Explore</h1>
       <div className="explore-search-bar">
         <input
           type="text"
