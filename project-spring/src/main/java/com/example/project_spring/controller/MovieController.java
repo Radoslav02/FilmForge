@@ -33,7 +33,7 @@ import java.util.List;
 @AllArgsConstructor
 public class MovieController {
 
-    private final MovieServiceImp movieService;
+    private final MovieServiceImp  movieService;
     private final MovieRepository movieRepository;
 
     @PostMapping("/addMovie")
@@ -148,23 +148,19 @@ public class MovieController {
     @GetMapping("/generateReport")
     public ResponseEntity<byte[]> generateMovieReport() {
         try {
-            // Pozovi servis za generisanje izveštaja
+
             JasperPrint jasperPrint = movieService.generateTop10MoviesReport();
 
-            // Proveri da li je JasperPrint popunjen
             if (jasperPrint.getPages().isEmpty()) {
                 throw new RuntimeException("Generated report has no pages.");
             }
 
-            // Generiši PDF
             byte[] pdfReport = JasperExportManager.exportReportToPdf(jasperPrint);
 
-            // Postavi zaglavlja za preuzimanje PDF fajla
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
             headers.setContentDispositionFormData("inline", "MoviesReport.pdf");
 
-            // Vraća odgovor sa PDF fajlom
             return ResponseEntity.ok()
                     .headers(headers)
                     .body(pdfReport);

@@ -17,10 +17,10 @@ public class JwtSecurityConfigurer extends SecurityConfigurerAdapter<DefaultSecu
         JwtTokenAuthenticationFilter customFilter = new JwtTokenAuthenticationFilter(jwtTokenProvider);
 
         http
-                 // Disable CSRF if you're using JWTs
+
                 .authorizeHttpRequests(authorize ->
                         authorize
-                                .anyRequest().authenticated() // Adjust authorization as needed
+                                .anyRequest().authenticated()
                 )
                 .addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exceptionHandling ->

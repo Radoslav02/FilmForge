@@ -36,9 +36,8 @@ public class User {
     @Column(name = "last_login")
     private LocalDateTime lastLogin;
 
-    // E-mail verification
     private String verificationToken;
-    private boolean isEnabled;
+    private String isEnabled;
 
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore

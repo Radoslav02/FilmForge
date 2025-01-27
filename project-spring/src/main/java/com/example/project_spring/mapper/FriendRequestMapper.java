@@ -11,7 +11,6 @@ public class FriendRequestMapper {
             return null;
         }
 
-        // Create a new DTO and set the fields
         FriendRequestDTO dto = new FriendRequestDTO();
         dto.setId(friendRequest.getId());
         dto.setSenderId(friendRequest.getSender() != null ? friendRequest.getSender().getId() : null);
@@ -19,7 +18,6 @@ public class FriendRequestMapper {
         dto.setAccepted(friendRequest.isAccepted());
         dto.setRequestDate(friendRequest.getRequestDate());
 
-        // Add sender details to the DTO if sender is not null
         if (friendRequest.getSender() != null) {
             dto.setSenderName(friendRequest.getSender().getFirstName());
             dto.setSenderSurname(friendRequest.getSender().getLastName());
@@ -35,7 +33,6 @@ public class FriendRequestMapper {
             return null;
         }
 
-        // Create a new FriendRequest entity and set the fields
         FriendRequest friendRequest = new FriendRequest();
         friendRequest.setId(dto.getId());
         friendRequest.setSender(sender);

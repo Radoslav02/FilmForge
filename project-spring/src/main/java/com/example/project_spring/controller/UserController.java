@@ -4,6 +4,8 @@ import com.example.project_spring.dto.CategoryDTO;
 import com.example.project_spring.dto.LoginRequestDTO;
 import com.example.project_spring.dto.MovieDTO;
 import com.example.project_spring.dto.UserDTO;
+import com.example.project_spring.entity.User;
+import com.example.project_spring.repository.UserRepository;
 import com.example.project_spring.security.jwt.JwtTokenProvider;
 import com.example.project_spring.service.impl.CategoryServiceImpl;
 import com.example.project_spring.service.impl.MovieServiceImp;
@@ -25,49 +27,56 @@ public class UserController {
     private final UserServiceImpl userService;
     private final JwtTokenProvider jwtTokenProvider;
     private final MovieServiceImp movieServiceImp;
+    private final UserRepository userRepository;
 
     @PostMapping("/register")
-    public ResponseEntity<UserDTO> registerUser(@RequestBody UserDTO userDTO) {
-        UserDTO savedUser = userService.createUser(userDTO);
-        return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
+    public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
+        try {
+
+            System.out.println("Received UserDTO: " + userDTO.toString());
+            UserDTO savedUser = userService.createUser(userDTO);
+
+            return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", e.getMessage());
+            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        }
     }
 
-    @GetMapping("/verify-email")
-    public ResponseEntity<String> verifyEmail(@RequestParam String token) {
-        if (token == null || token.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid or missing token.");
-        }
 
-        boolean isVerified = userService.verifyUserEmail(token);
-        if (isVerified) {
-            return ResponseEntity.ok("Email successfully verified.");
+    @GetMapping("/confirm")
+    public ResponseEntity<String> confirmEmail(@RequestParam("token") String token) {
+        Optional<User> optionalUser = userRepository.findByVerificationToken(token);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setIsEnabled("activated");
+            user.setVerificationToken(null); // Token više nije potreban
+            userRepository.save(user);
+            return ResponseEntity.ok("Email confirmed successfully!");
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid token.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid or expired token.");
         }
     }
+
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> loginUser(@RequestBody LoginRequestDTO loginRequest) {
-        // Log ulaznih podataka
         System.out.println("Login request received: email=" + loginRequest.getEmail() + ", password=" + loginRequest.getPassword());
 
         try {
-            // Autentifikacija korisnika
             UserDTO authenticatedUser = userService.authenticateUser(loginRequest.getEmail(), loginRequest.getPassword());
 
-            // Provera da li je korisnik enabled
-            if (!authenticatedUser.isEnabled()) {
+            if (!authenticatedUser.getIsEnabled().equals("activated")) {
                 System.err.println("Login failed: User account is disabled.");
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "User account is disabled."));
             }
 
-            // Generisanje tokena za autentifikovanog korisnika
             String token = jwtTokenProvider.createToken(authenticatedUser.getEmail(),authenticatedUser.getId(), List.of("USER"));
 
-            // Log uspešne autentifikacije
             System.out.println("Authentication successful for email: " + authenticatedUser.getEmail());
 
-            // Formiranje odgovora
             Map<String, Object> response = new HashMap<>();
             response.put("token", token);
             response.put("email", authenticatedUser.getEmail());
@@ -83,7 +92,6 @@ public class UserController {
 
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            // Log greške
             System.err.println("Authentication failed: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", e.getMessage()));
         }

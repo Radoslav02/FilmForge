@@ -20,7 +20,6 @@ public class MessageMapper {
     public Message toEntity(MessageDTO dto) {
         Message message = new Message();
         message.setId(dto.getId());
-        // Sender and Receiver need to be fetched in Service layer
         message.setText(dto.getText());
         message.setSentDate(dto.getSentDate());
         return message;

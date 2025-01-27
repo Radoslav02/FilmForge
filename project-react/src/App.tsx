@@ -4,6 +4,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import Header from "./components/Header/Header";
 import { useSelector } from "react-redux";
 import { RootState } from "./components/Redux/store";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   const navigate = useNavigate();
@@ -15,6 +16,10 @@ function App() {
 
   return (
     <div className="container-fluid">
+        <ToastContainer
+          position="top-center"
+          autoClose={1000}
+        />
       <Header />
       <Outlet />
     </div>

@@ -10,6 +10,9 @@ import InsertCommentIcon from "@mui/icons-material/InsertComment";
 import CommentsDisabledIcon from "@mui/icons-material/CommentsDisabled";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import SendIcon from "@mui/icons-material/Send";
+import LogoutIcon from "@mui/icons-material/Logout";
+import EditIcon from "@mui/icons-material/Edit";
+import { toast } from "react-toastify";
 
 interface Movie {
   id: number;
@@ -78,7 +81,7 @@ export default function Profile() {
       movies.map(async (movie) => {
         try {
           const response = await fetch(
-            `http://localhost:8080/api/movie/${movie.id}/comments`,
+            `${import.meta.env.VITE_APP_API_URL}/api/movie/${movie.id}/comments`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -113,13 +116,13 @@ export default function Profile() {
     const token = localStorage.getItem("jwtToken");
 
     if (!user?.id || value < 1 || value > 5) {
-      alert("Please provide a valid rating between 1 and 5.");
+      toast.error("Please provide a valid rating between 1 and 5.");
       return;
     }
 
     try {
       const response = await fetch(
-        `http://localhost:8080/api/movie/${movieId}/grade`,
+        `${import.meta.env.VITE_APP_API_URL}/api/movie/${movieId}/grade`,
         {
           method: "POST",
           headers: {
@@ -137,11 +140,11 @@ export default function Profile() {
         throw new Error(await response.text());
       }
 
-      alert("Rating submitted successfully!");
+      toast.success("Rating submitted successfully!");
       setTimeout(() => alert(null), 3000);
     } catch (err: any) {
       console.error(err);
-      alert("Failed to submit rating. Please try again.");
+      toast.error("Failed to submit rating. Please try again.");
     }
   };
 
@@ -155,7 +158,7 @@ export default function Profile() {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/api/movie/${movieId}/comment`,
+        `${import.meta.env.VITE_APP_API_URL}/api/movie/${movieId}/comment`,
         {
           method: "POST",
           headers: {
@@ -191,7 +194,7 @@ export default function Profile() {
       setNewComment((prev) => ({ ...prev, [movieId]: "" }));
     } catch (err: any) {
       console.error("Error:", err.message);
-      alert("Failed to add comment. Please try again.");
+      toast.error("Failed to add comment. Please try again.");
     }
   };
 
@@ -249,7 +252,7 @@ export default function Profile() {
       console.log("Payload being sent to backend:", updatedUserPayload);
 
       const response = await fetch(
-        "http://localhost:8080/api/users/editProfile",
+        `${import.meta.env.VITE_APP_API_URL}/api/users/editProfile`,
         {
           method: "PUT",
           headers: {
@@ -294,7 +297,7 @@ export default function Profile() {
       }
 
       const response = await fetch(
-        `http://localhost:8080/api/movie/deleteMovie/${movieId}`,
+        `${import.meta.env.VITE_APP_API_URL}/api/movie/deleteMovie/${movieId}`,
         {
           method: "DELETE",
           headers: {
@@ -311,7 +314,7 @@ export default function Profile() {
       setMovies((prevMovies) =>
         prevMovies.filter((movie) => movie.id !== movieId)
       );
-      alert("Movie deleted successfully");
+      toast.success("Movie deleted successfully");
     } catch (error) {
       console.error("Error during delete:", error);
       setError("Failed to delete movie. Please try again later.");
@@ -332,7 +335,7 @@ export default function Profile() {
       }
 
       const response = await fetch(
-        `http://localhost:8080/api/users/${user.id}/movies`,
+        `${import.meta.env.VITE_APP_API_URL}/api/users/${user.id}/movies`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -546,12 +549,13 @@ export default function Profile() {
           <div className="profile-actions">
             {!isEditing ? (
               <div className="profile-button-wrapper">
-                <button className="logout-button" onClick={handleLogOut}>
-                  Log Out
-                </button>
-                <button className="edit-on-button" onClick={handleEditToggle}>
-                  Edit Info
-                </button>
+                <LogoutIcon sx={{fontSize: 40}} className="logout-button" onClick={handleLogOut} />
+
+                <EditIcon
+                  sx={{fontSize: 40}}
+                  className="edit-on-button"
+                  onClick={handleEditToggle}
+                />
               </div>
             ) : (
               <div className="edit-buttons-wrapper">
@@ -626,7 +630,7 @@ export default function Profile() {
                       </div>
                       {movie.imageUrl && (
                         <img
-                          src={`http://localhost:8080${movie.imageUrl}`}
+                          src={`${import.meta.env.VITE_APP_API_URL}${movie.imageUrl}`}
                           alt={movie.title}
                           className="profile-movie-image"
                         />

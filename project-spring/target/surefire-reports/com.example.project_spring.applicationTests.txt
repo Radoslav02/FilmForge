@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.example.project_spring.applicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.319 s -- in com.example.project_spring.applicationTests

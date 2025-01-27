@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import emailjs from "emailjs-com";
+
 import "./Register.css";
+import { toast } from "react-toastify";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -28,12 +29,12 @@ export default function Register() {
     e.preventDefault();
 
     if (formData.password !== formData.confirmationPassword) {
-      alert("Passwords do not match");
+      toast.error("Passwords do not match");
       return;
     }
 
     try {
-      const response = await fetch("http://localhost:8080/api/users/register", {
+      const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/api/users/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -41,40 +42,20 @@ export default function Register() {
         body: JSON.stringify(formData),
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        const verificationToken = data.verificationToken;
+      console.log(formData)
 
-        if (verificationToken) {
-          emailjs
-            .send(
-              "service_ddp52dz",
-              "template_7xzzrqh",
-              {
-                email: formData.email,
-                token: verificationToken,
-              },
-              "1Ub-jNsHy7L9Iiri8"
-            )
-            .then(() => {
-              alert(
-                "Registration successful. Please check your email to verify your account."
-              );
-              navigate("/check-email");
-            })
-            .catch((error) => {
-              console.error("Error sending verification email:", error);
-              alert("Failed to send verification email.");
-            });
-        } else {
-          alert("Verification token missing.");
-        }
+      if (response.ok) {
+        toast.success(
+          "Registration successful. Please check your email to verify your account."
+        );
+        navigate("/check-email");
       } else {
-        alert("Failed to register!");
+        const errorData = await response.json();
+        toast.error(errorData.message || "Failed to register!");
       }
     } catch (error) {
       console.error("Error during registration:", error);
-      alert("An error occurred. Please try again later.");
+      toast.error("An error occurred. Please try again later.");
     }
   };
 

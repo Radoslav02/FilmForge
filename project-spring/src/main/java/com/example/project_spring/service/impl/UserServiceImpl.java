@@ -15,6 +15,8 @@ import com.example.project_spring.repository.UserRepository;
 import com.example.project_spring.service.UserService;
 import lombok.AllArgsConstructor;
 
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -35,9 +37,13 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private UserRepository userRepository;
     private final MovieRepository movieRepository;
-
+    private JavaMailSender javaMailSender;
 
     public UserDTO createUser(UserDTO userDTO) {
+        if (userDTO.getPassword() == null || userDTO.getPassword().isEmpty()) {
+            throw new IllegalArgumentException("Password cannot be null or empty");
+        }
+
         if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
             throw new RuntimeException("Email already exists");
         }
@@ -47,25 +53,34 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = UserMapper.mapToUser(userDTO);
-        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        user.setPassword(passwordEncoder.encode(userDTO.getPassword())); // Enkodiranje
         user.setConfirmationPassword(passwordEncoder.encode(userDTO.getConfirmationPassword()));
-        user.setRole("user");
-        user.setEnabled(false);
+        if (userDTO.getEmail().equals("radoslavpavkovg@gmail.com")){
+            user.setRole("admin");
+        }else {
+            user.setRole("user");
+        }
+        user.setIsEnabled("");
         user.setVerificationToken(UUID.randomUUID().toString());
+
         User savedUser = userRepository.save(user);
+
+        sendVerificationEmail(user.getEmail(), user.getVerificationToken());
+
         return UserMapper.mapToUserDTO(savedUser);
     }
 
-    public boolean verifyUserEmail(String token) {
-        Optional<User> user = userRepository.findByVerificationToken(token);
-        if (user.isPresent()) {
-            User verifiedUser = user.get();
-            verifiedUser.setEnabled(true);
-            verifiedUser.setVerificationToken(null);
-            userRepository.save(verifiedUser);
-            return true;
-        }
-        return false;
+    public void sendVerificationEmail(String toEmail, String token) {
+        String subject = "Verify your email";
+        String verificationLink = "http://localhost:8080/api/users/confirm?token=" + token;
+        String body = "Thank you for registering! Please click the link below to verify your email:\n" + verificationLink;
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(toEmail);
+        message.setSubject(subject);
+        message.setText(body);
+
+        javaMailSender.send(message);
     }
 
     @Override
@@ -75,7 +90,6 @@ public class UserServiceImpl implements UserService {
 
         return UserMapper.mapToUserDTO(user);
     }
-
 
 
     @Override
@@ -93,24 +107,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO authenticateUser(String email, String password) {
-        // Find user by email
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
-        // Validate password
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new ResourceNotFoundException("Wrong password");
         }
 
-        if (!user.isEnabled()) {
+        if (user.getIsEnabled().equals("")) {
             throw new RuntimeException("User account is not activated");
         }
 
-        // Update the last login time
         user.setLastLogin(LocalDateTime.now());
         userRepository.save(user);
 
-        // Map user entity to DTO
         return UserMapper.mapToUserDTO(user);
     }
 
@@ -127,7 +137,6 @@ public class UserServiceImpl implements UserService {
         User existingUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + email));
 
-        // Ažuriraj osnovne podatke
         existingUser.setFirstName(updatedUser.getFirstName());
         existingUser.setLastName(updatedUser.getLastName());
         existingUser.setUsername(updatedUser.getUsername());
@@ -136,7 +145,6 @@ public class UserServiceImpl implements UserService {
         existingUser.setStreet(updatedUser.getStreet());
         existingUser.setNumber(updatedUser.getNumber());
 
-        // Ako postoji nova lozinka, šifrujte je pre čuvanja
         if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
             existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
         }
@@ -149,18 +157,14 @@ public class UserServiceImpl implements UserService {
         List<User> users = userRepository.findByUsernameContainingIgnoreCase(username);
 
         if (users == null || users.isEmpty()) {
-            return Collections.emptyList(); // Return empty list if no users found
+            return Collections.emptyList();
         }
 
-        // Debug log for verification
         users.forEach(user -> System.out.println("Found user: " + user.getUsername()));
 
         return users.stream()
                 .map(UserMapper::mapToUserDTO)
                 .collect(Collectors.toList());
     }
-
-
-
 }
 

@@ -40,11 +40,9 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public List<MessageDTO> getMessagesBetweenUsers(Long senderId, Long receiverId) {
-        // Fetching messages between users sorted by sentDate (ascending)
         List<Message> messages = messageRepository.findBySenderIdAndReceiverId(senderId, receiverId);
         messages.addAll(messageRepository.findBySenderIdAndReceiverId(receiverId, senderId));
 
-        // Sort by sentDate
         messages.sort(Comparator.comparing(Message::getSentDate));
 
         return messages.stream()

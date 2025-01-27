@@ -18,7 +18,6 @@ public class FavoriteMoviesController {
 
     private final FavoriteMoviesServiceImpl favoriteMoviesService;
 
-    // Endpoint to create an empty favorite movies list
     @PostMapping("/create-empty-list/{userId}/{categoryName}")
     public ResponseEntity<FavoriteMoviesDTO> createEmptyFavoriteMoviesList(
             @PathVariable Long userId,
@@ -28,7 +27,6 @@ public class FavoriteMoviesController {
         return new ResponseEntity<>(favoriteMoviesDTO, HttpStatus.CREATED);
     }
 
-    // Endpoint to add a movie to the favorite movies list
     @PostMapping("/{favoriteMoviesId}/add-movie/{movieId}")
     public ResponseEntity<FavoriteMoviesDTO> addMovieToFavoriteList(
             @PathVariable Long favoriteMoviesId,

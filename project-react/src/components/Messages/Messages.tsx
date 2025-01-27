@@ -46,7 +46,7 @@ export default function Messages() {
         }
 
         const response = await fetch(
-          `http://localhost:8080/api/requests/friends/${userId}`,
+          `${import.meta.env.VITE_APP_API_URL}/api/requests/friends/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -85,7 +85,7 @@ export default function Messages() {
     if (!token || !user?.id) return;
 
     const response = await fetch(
-      `http://localhost:8080/api/messages/conversation?senderId=${user.id}&receiverId=${receiverId}`,
+      `${import.meta.env.VITE_APP_API_URL}/api/messages/conversation?senderId=${user.id}&receiverId=${receiverId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -110,7 +110,7 @@ export default function Messages() {
     const token = localStorage.getItem("jwtToken");
 
     const response = await fetch(
-      `http://localhost:8080/api/messages/send?senderId=${user.id}&receiverId=${selectedUser.id}&text=${messageText}`,
+      `${import.meta.env.VITE_APP_API_URL}/api/messages/send?senderId=${user.id}&receiverId=${selectedUser.id}&text=${messageText}`,
       {
         method: "POST",
         headers: {

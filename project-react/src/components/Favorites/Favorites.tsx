@@ -3,6 +3,7 @@ import "./Favorites.css";
 import { RootState } from "../Redux/store";
 import { useSelector } from "react-redux";
 import DeleteIcon from '@mui/icons-material/Delete';
+import { toast } from "react-toastify";
 
 interface MovieDTO {
   id: number;
@@ -43,7 +44,7 @@ export default function Favorites() {
       }
 
       const response = await fetch(
-        `http://localhost:8080/api/favorite-movies/deleteList/${listId}`,
+        `${import.meta.env.VITE_APP_API_URL}/api/favorite-movies/deleteList/${listId}`,
         {
           method: "DELETE",
           headers: {
@@ -60,7 +61,7 @@ export default function Favorites() {
       setFavoriteMoviesList((prevMoviesLists) =>
         prevMoviesLists.filter((list) => list.id !== listId)
       );
-      alert("Movie list deleted successfully");
+      toast.success("Movie list deleted successfully");
     } catch (error) {
       console.error("Error during delete:", error);
     }
@@ -76,13 +77,13 @@ export default function Favorites() {
     const jwtToken = localStorage.getItem("jwtToken");
 
     if (!jwtToken) {
-      alert("No JWT token found");
+      toast.error("No JWT token found");
       return;
     }
 
     try {
       const response = await fetch(
-        `http://localhost:8080/api/favorite-movies/list?userId=${userId}`,
+        `${import.meta.env.VITE_APP_API_URL}/api/favorite-movies/list?userId=${userId}`,
         {
           method: "GET",
           headers: {
@@ -105,13 +106,13 @@ export default function Favorites() {
     const jwtToken = localStorage.getItem("jwtToken");
 
     if (!jwtToken) {
-      alert("No JWT token found");
+      toast.error("No JWT token found");
       return;
     }
 
     try {
       const response = await fetch(
-        `http://localhost:8080/api/favorite-movies/create-empty-list/${user?.id}/${categoryName}`,
+        `${import.meta.env.VITE_APP_API_URL}/api/favorite-movies/create-empty-list/${user?.id}/${categoryName}`,
         {
           method: "POST",
           headers: {
@@ -139,13 +140,13 @@ export default function Favorites() {
     const jwtToken = localStorage.getItem("jwtToken");
   
     if (!jwtToken) {
-      alert("No JWT token found");
+      toast.error("No JWT token found");
       return;
     }
   
     try {
       const response = await fetch(
-        `http://localhost:8080/api/favorite-movies/deleteMovieFromList/${movieId}/${listId}`,
+        `${import.meta.env.VITE_APP_API_URL}/api/favorite-movies/deleteMovieFromList/${movieId}/${listId}`,
         {
           method: "DELETE",
           headers: {
@@ -170,10 +171,10 @@ export default function Favorites() {
         )
       );
   
-      alert("Movie removed successfully");
+      toast.success("Movie removed successfully");
     } catch (err) {
       console.error("Error during remove:", err);
-      alert("Failed to remove movie");
+      toast.error("Failed to remove movie");
     }
   };
 

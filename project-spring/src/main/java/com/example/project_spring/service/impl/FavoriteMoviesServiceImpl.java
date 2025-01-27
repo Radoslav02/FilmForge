@@ -53,7 +53,6 @@ public class FavoriteMoviesServiceImpl implements FavoriteMoviesService {
         Movie movie = movieRepository.findById(movieId)
                 .orElseThrow(() -> new RuntimeException("Movie not found"));
 
-        // Dodaj film u listu ako već nije dodat
         if (!favoriteMovies.getMovies().contains(movie)) {
             favoriteMovies.getMovies().add(movie);
         } else {

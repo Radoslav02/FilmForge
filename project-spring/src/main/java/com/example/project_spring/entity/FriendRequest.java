@@ -33,6 +33,6 @@ public class FriendRequest {
     public FriendRequest(User sender, User receiver) {
         this.sender = sender;
         this.receiver = receiver;
-        this.requestDate = new Date(); // Automatically set the current date
+        this.requestDate = new Date();
     }
 }

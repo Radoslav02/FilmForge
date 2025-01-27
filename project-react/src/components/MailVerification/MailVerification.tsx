@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function VerifyEmail() {
   const navigate = useNavigate();
@@ -10,20 +11,20 @@ export default function VerifyEmail() {
     const token = queryParams.get("token");
   
     if (token) {
-      fetch(`http://localhost:8080/api/users/verify-email?token=${token}`, {
+      fetch(`${import.meta.env.VITE_APP_API_URL}/api/users/verify-email?token=${token}`, {
         method: "GET", 
       })
         .then((response) => {
           if (response.ok) {
-            alert("Email verified successfully!");
+            toast.success("Email verified successfully!");
             navigate("/login");
           } else {
-            alert("Invalid token or token expired.");
+            toast.error("Invalid token or token expired.");
           }
         })
         .catch((error) => {
           console.error("Error during email verification:", error);
-          alert("Error occurred. Please try again.");
+          toast.error("Error occurred. Please try again.");
         });
     }
   }, [location.search, navigate]);

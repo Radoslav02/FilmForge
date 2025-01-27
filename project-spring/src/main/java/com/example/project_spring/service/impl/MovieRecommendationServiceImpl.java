@@ -29,25 +29,21 @@ public class MovieRecommendationServiceImpl implements MovieRecommendationServic
 
     @Override
     public MovieRecommendationDTO createRecommendation(Long movieId, Long recommenderId, Long receiverId) {
-        // Use findById() to check the recommender
         Optional<User> recommender = userRepository.findById(recommenderId);
         if (!recommender.isPresent()) {
             throw new ResourceNotFoundException("Recommender not found");
         }
 
-        // Use findById() to check the movie
         Optional<Movie> movie = movieRepository.findById(movieId);
         if (!movie.isPresent()) {
             throw new ResourceNotFoundException("Movie not found");
         }
 
-        // Use findById() to check the receiver
         Optional<User> receiver = userRepository.findById(receiverId);
         if (!receiver.isPresent()) {
             throw new ResourceNotFoundException("Receiver not found");
         }
 
-        // Create new recommendation
         Date now = new Date();
 
         MovieRecommendation movieRecommendation = new MovieRecommendation();

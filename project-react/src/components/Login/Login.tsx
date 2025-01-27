@@ -3,7 +3,7 @@ import "./Login.css";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { login } from "../Redux/authSlice";
-
+import { toast } from "react-toastify";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -13,10 +13,9 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      
       console.log("Login data being sent:", { email, password });
 
-      const response = await fetch("http://localhost:8080/api/users/login", {
+      const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/api/users/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -24,7 +23,6 @@ export default function Login() {
         body: JSON.stringify({ email, password }),
       });
 
-    
       console.log("Response status:", response.status);
 
       if (!response.ok) {
@@ -46,7 +44,6 @@ export default function Login() {
         isAdmin,
       } = await response.json();
 
-
       console.log("Response data:", {
         token,
         email: responseEmail,
@@ -56,14 +53,12 @@ export default function Login() {
         isAdmin,
       });
 
-     
       localStorage.setItem("jwtToken", token);
 
-      
       dispatch(
         login({
           id,
-          email: responseEmail, 
+          email: responseEmail,
           isAdmin,
           firstName,
           lastName,
@@ -74,13 +69,11 @@ export default function Login() {
           number,
         })
       );
-      
-      
+
       navigate("/profile");
     } catch (error: any) {
-    
       console.error("Login failed:", error.message);
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -114,7 +107,7 @@ export default function Login() {
         <div className="register-form">
           <span onClick={() => navigate("/register")}>
             <p className="dont">Don't have an account?</p>
-            <p>Create one</p>
+            <p className="create-p">Create one!</p>
           </span>
         </div>
         <div className="login-button-wrapper">

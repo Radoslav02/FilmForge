@@ -21,13 +21,20 @@
     display: flex;
     flex-direction: column;
     width: 250px;
+    gap: 5px;
+}
+
+.register-form-wrapper label{
+    font-weight: bold;
 }
 
 .register-form-wrapper input{
     width: 250px;
     height: 30px;
-    border: 1px solid black;
     border-radius: 5px;
+    background-color: #363636;
+    color: #e1ca1c;
+    border: none;
 }
 
 .back-button{

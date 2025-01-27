@@ -32,16 +32,21 @@ const ExploreMovies: React.FC = () => {
     null
   );
 
+
+
   useEffect(() => {
+    
     const fetchMovies = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8080/api/movie/getAllMovies"
+          `${import.meta.env.VITE_APP_API_URL}/api/movie/getAllMovies`
+
         );
         if (!response.ok) {
           throw new Error("Failed to fetch movies");
         }
         const data: Movie[] = await response.json();
+     
         setMovies(data);
       } catch (error) {
         console.error("Error fetching movies:", error);
@@ -53,10 +58,13 @@ const ExploreMovies: React.FC = () => {
 
   useEffect(() => {
     const fetchCategories = async () => {
+   
       try {
         const response = await fetch(
-          "http://localhost:8080/api/categories/allCategories"
+          `${import.meta.env.VITE_APP_API_URL}/api/categories/allCategories`
+          
         );
+        
         if (!response.ok) {
           throw new Error("Failed to fetch categories");
         }
@@ -151,7 +159,7 @@ const ExploreMovies: React.FC = () => {
           </div>
           {movie.imageUrl && (
             <img
-              src={`http://localhost:8080${movie.imageUrl}`}
+              src={`${import.meta.env.VITE_APP_API_URL}${movie.imageUrl}`}
               alt={`${movie.title} Poster`}
               className="movie-image"
             />

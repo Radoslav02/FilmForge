@@ -40,7 +40,7 @@ const UserSearch: React.FC = () => {
   
     try {
       const response = await fetch(
-        `http://localhost:8080/api/users/search?username=${encodeURIComponent(query)}`,
+        `${import.meta.env.VITE_APP_API_URL}/api/users/search?username=${encodeURIComponent(query)}`,
         {
           method: "GET",
           headers: {

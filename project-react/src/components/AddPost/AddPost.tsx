@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../Redux/store";
 import { logout } from "../Redux/authSlice";
 import "./AddPost.css";
+import { toast } from "react-toastify";
 
 export default function AddPost() {
   const dispatch = useDispatch();
@@ -35,13 +36,14 @@ export default function AddPost() {
     const fetchCategories = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8080/api/categories/allCategories",
+          `${import.meta.env.VITE_APP_API_URL}/api/categories/allCategories`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
+        
 
         if (!response.ok) {
           throw new Error("Failed to fetch categories.");
@@ -74,7 +76,7 @@ export default function AddPost() {
       };
       reader.readAsDataURL(file);
     } else {
-      alert("Please upload a valid image file (jpg, png, etc.)");
+      toast.error("Please upload a valid image file (jpg, png, etc.)");
     }
   };
 
@@ -98,7 +100,7 @@ export default function AddPost() {
       !movieData.description ||
       !selectedCategory
     ) {
-      alert("Please fill out all fields before submitting.");
+      toast.error("Please fill out all fields before submitting.");
       return;
     }
 
@@ -126,7 +128,7 @@ export default function AddPost() {
         throw new Error("User ID is required");
       }
 
-      const response = await fetch("http://localhost:8080/api/movie/addMovie", {
+      const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/api/movie/addMovie`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -140,7 +142,7 @@ export default function AddPost() {
         throw new Error("Failed to add movie.");
       }
 
-      alert("Movie added successfully!");
+      toast.success("Movie added successfully!");
       setMovieData({
         title: "",
         director: "",

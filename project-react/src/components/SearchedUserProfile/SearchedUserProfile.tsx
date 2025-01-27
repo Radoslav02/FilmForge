@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom'; 
 import { RootState } from '../Redux/store';
 import "./SearchedUserProfile.css";
+import { toast } from 'react-toastify';
 
 interface Movie {
   id: number;
@@ -47,7 +48,7 @@ const SearchedUserProfile: React.FC = () => {
           return;
         }
 
-        const response = await fetch(`http://localhost:8080/api/users/${userId}`, {
+        const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/api/users/${userId}`, {
           headers: {
             Authorization: `Bearer ${token}`, 
           },
@@ -56,7 +57,7 @@ const SearchedUserProfile: React.FC = () => {
         if (!response.ok) throw new Error('Failed to fetch profile.');
         const userProfile: UserProfile = await response.json();
 
-        const moviesResponse = await fetch(`http://localhost:8080/api/users/${userId}/movies`, {
+        const moviesResponse = await fetch(`${import.meta.env.VITE_APP_API_URL}/api/users/${userId}/movies`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -94,7 +95,7 @@ const SearchedUserProfile: React.FC = () => {
 
       const senderId = user?.id;
 
-      const response = await fetch(`http://localhost:8080/api/requests/send?senderId=${senderId}&receiverId=${userId}`, {
+      const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/api/requests/send?senderId=${senderId}&receiverId=${userId}`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -102,7 +103,7 @@ const SearchedUserProfile: React.FC = () => {
       });
 
       if (response.ok) {
-        alert('Friend request sent successfully');
+        toast.success('Friend request sent successfully');
       } else {
         throw new Error('Failed to send friend request');
       }
@@ -155,7 +156,7 @@ const SearchedUserProfile: React.FC = () => {
               </div>
               {movie.imageUrl && (
                 <img
-                  src={`http://localhost:8080${movie.imageUrl}`}
+                  src={`${import.meta.env.VITE_APP_API_URL}${movie.imageUrl}`}
                   alt={movie.title}
                   className="profile-movie-image"
                 />

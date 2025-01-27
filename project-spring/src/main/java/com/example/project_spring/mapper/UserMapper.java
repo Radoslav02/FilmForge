@@ -15,21 +15,18 @@ public class UserMapper {
             return null;
         }
 
-        // Mapiranje liste poslatih zahteva
         List<FriendRequestDTO> sentRequests = user.getSentRequests() != null
                 ? user.getSentRequests().stream()
                 .map(FriendRequestMapper::toDTO)
                 .collect(Collectors.toList())
                 : null;
 
-        // Mapiranje liste primljenih zahteva
         List<FriendRequestDTO> receivedRequests = user.getReceivedRequests() != null
                 ? user.getReceivedRequests().stream()
                 .map(FriendRequestMapper::toDTO)
                 .collect(Collectors.toList())
                 : null;
 
-        // Kreiraj i vrati UserDTO
         return new UserDTO(
                 user.getId(),
                 user.getFirstName(),
@@ -46,7 +43,7 @@ public class UserMapper {
                 user.getRegistrationDate(),
                 user.getLastLogin(),
                 user.getVerificationToken(),
-                user.isEnabled(),
+                user.getIsEnabled(),
                 user.getMoviesAdded(),
                 sentRequests,
                 receivedRequests
@@ -58,7 +55,6 @@ public class UserMapper {
             return null;
         }
 
-        // Mapiranje User-a bez FriendRequest entiteta
         User user = new User();
         user.setId(userDTO.getId());
         user.setFirstName(userDTO.getFirstName());
@@ -75,10 +71,8 @@ public class UserMapper {
         user.setRegistrationDate(userDTO.getRegistrationDate());
         user.setLastLogin(userDTO.getLastLogin());
         user.setVerificationToken(userDTO.getVerificationToken());
-        user.setEnabled(userDTO.isEnabled());
+        user.setIsEnabled(userDTO.getIsEnabled());
         user.setMoviesAdded(userDTO.getMoviesAdded());
-
-        // Prilagodba za zahteve se obično radi negde drugde u servisu, jer entitet zahteva može zavisiti od dodatnih podataka
 
         return user;
     }

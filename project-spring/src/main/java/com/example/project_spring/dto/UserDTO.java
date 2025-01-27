@@ -26,10 +26,9 @@ public class UserDTO {
     private String lastName;
     private String email;
 
-    @JsonIgnore
+
     private String password;
 
-    @JsonIgnore
     private String confirmationPassword;
 
     private String city;
@@ -41,9 +40,8 @@ public class UserDTO {
     private LocalDateTime registrationDate;
     private LocalDateTime lastLogin;
 
-    // E-mail verification
     private String verificationToken;
-    private boolean isEnabled;
+    private String isEnabled;
     
     @JsonIgnore
     private List<Movie> moviesAdded = new ArrayList<>();
@@ -68,6 +66,6 @@ public class UserDTO {
         this.registrationDate = user.getRegistrationDate();
         this.lastLogin = user.getLastLogin();
         this.verificationToken = user.getVerificationToken();
-        this.isEnabled = user.isEnabled();
+        this.isEnabled = user.getIsEnabled();
     }
 }

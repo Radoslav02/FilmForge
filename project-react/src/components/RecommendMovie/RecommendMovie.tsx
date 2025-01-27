@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../Redux/store";
 import "./RecommendMovie.css";
+import { toast } from "react-toastify";
 
 interface RecommendMovieProps {
   movieId: number;
@@ -34,7 +35,7 @@ const RecommendMovie: React.FC<RecommendMovieProps> = ({ movieId, recommenderId 
     const fetchFriends = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8080/api/requests/usersFriends/${user?.id}`,
+          `${import.meta.env.VITE_APP_API_URL}/api/requests/usersFriends/${user?.id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -49,7 +50,7 @@ const RecommendMovie: React.FC<RecommendMovieProps> = ({ movieId, recommenderId 
         const data: FriendRequestDTO[] = await response.json();
         setFriends(data);
       } catch (err: any) {
-        alert("Failed to load friends.");
+        toast.error("Failed to load friends.");
         console.error(err);
       }
     };
@@ -57,7 +58,7 @@ const RecommendMovie: React.FC<RecommendMovieProps> = ({ movieId, recommenderId 
     if (user?.id && token) {
       fetchFriends();
     } else {
-        alert("User not authenticated.");
+        toast.error("User not authenticated.");
     }
   }, [user?.id]);
 
@@ -69,7 +70,7 @@ const RecommendMovie: React.FC<RecommendMovieProps> = ({ movieId, recommenderId 
     console.log("Receiver ID (selectedFriend):", receiverId);
 
     try {
-      const response = await fetch(`http://localhost:8080/api/recommendations/sendRecommendation/${movieId}/${recommenderId}/${receiverId}`, {
+      const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/api/recommendations/sendRecommendation/${movieId}/${recommenderId}/${receiverId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -81,9 +82,9 @@ const RecommendMovie: React.FC<RecommendMovieProps> = ({ movieId, recommenderId 
         throw new Error("Failed to send movie recommendation.");
       }
 
-      alert("Movie recommendation sent successfully!");
+      toast.success("Movie recommendation sent successfully!");
     } catch (err: any) {
-        alert("Failed to send recommendation.");
+        toast.error("Failed to send recommendation.");
       console.error(err);
     }
   };

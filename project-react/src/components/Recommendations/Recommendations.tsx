@@ -74,7 +74,7 @@ export default function Recommendations() {
       movies.map(async (movie) => {
         try {
           const response = await fetch(
-            `http://localhost:8080/api/movie/${movie.id}/comments`,
+            `${import.meta.env.VITE_APP_API_URL}/api/movie/${movie.id}/comments`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -115,7 +115,7 @@ export default function Recommendations() {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/api/movie/${movieId}/grade`,
+        `${import.meta.env.VITE_APP_API_URL}/api/movie/${movieId}/grade`,
         {
           method: "POST",
           headers: {
@@ -151,7 +151,7 @@ export default function Recommendations() {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/api/movie/${movieId}/comment`,
+        `${import.meta.env.VITE_APP_API_URL}/api/movie/${movieId}/comment`,
         {
           method: "POST",
           headers: {
@@ -210,7 +210,7 @@ export default function Recommendations() {
         if (!user?.id) return;
 
         const response = await fetch(
-          `http://localhost:8080/api/recommendations/getRecommendations/${user.id}`,
+          `${import.meta.env.VITE_APP_API_URL}/api/recommendations/getRecommendations/${user.id}`,
           {
             method: "GET",
             headers: {
@@ -288,7 +288,7 @@ export default function Recommendations() {
                 </div>
                 {movie.imageUrl && (
                   <img
-                    src={`http://localhost:8080${movie.imageUrl}`}
+                    src={`${import.meta.env.VITE_APP_API_URL}${movie.imageUrl}`}
                     alt={`${movie.title} Poster`}
                     className="movie-image"
                   />

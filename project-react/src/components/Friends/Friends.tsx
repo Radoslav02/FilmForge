@@ -27,7 +27,7 @@ export default function Friends() {
     const fetchFriends = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8080/api/requests/usersFriends/${user?.id}`,
+          `${import.meta.env.VITE_APP_API_URL}/api/requests/usersFriends/${user?.id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -60,7 +60,7 @@ export default function Friends() {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/api/requests/delete/${requestId}`,
+        `${import.meta.env.VITE_APP_API_URL}/api/requests/delete/${requestId}`,
         {
           method: "DELETE",
           headers: {

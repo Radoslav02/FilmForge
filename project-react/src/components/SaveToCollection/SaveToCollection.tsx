@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "./SaveToCollection.css";
+import { toast } from "react-toastify";
 
 interface FavoriteMoviesDTO {
   id: number;
@@ -24,12 +25,12 @@ export default function SaveToCollection({ movieId, userId }: SaveToCollectionPr
     const jwtToken = localStorage.getItem("jwtToken");
 
     if (!jwtToken) {
-      alert("No JWT token found");
+      toast.error("No JWT token found");
       return;
     }
 
     try {
-      const response = await fetch(`http://localhost:8080/api/favorite-movies/list?userId=${userId}`, {
+      const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/api/favorite-movies/list?userId=${userId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -52,12 +53,12 @@ export default function SaveToCollection({ movieId, userId }: SaveToCollectionPr
     const jwtToken = localStorage.getItem("jwtToken");
 
     if (!jwtToken) {
-      alert("No JWT token found");
+      toast.error("No JWT token found");
       return;
     }
 
     try {
-      const response = await fetch(`http://localhost:8080/api/favorite-movies/add-movie/${favoriteMoviesId}/${movieId}`, {
+      const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/api/favorite-movies/add-movie/${favoriteMoviesId}/${movieId}`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${jwtToken}`,
@@ -68,10 +69,10 @@ export default function SaveToCollection({ movieId, userId }: SaveToCollectionPr
         throw new Error("Failed to add movie to favorite list");
       }
 
-      alert("Movie added to favorite list successfully!");
+      toast.success("Movie added to favorite list successfully!");
     } catch (error) {
       console.error("Error adding movie to favorite list:", error);
-      alert("Failed to add movie to favorite list");
+      toast.error("Failed to add movie to favorite list");
     }
   };
 

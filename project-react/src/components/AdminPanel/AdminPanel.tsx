@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./AdminPanel.css";
 import SearchIcon from "@mui/icons-material/Search";
 import EditMovie from "../EditMovie/EditMovie";
+import { toast } from "react-toastify";
 
 interface Movie {
   id: number;
@@ -47,7 +48,7 @@ export default function AdminPanel() {
     const fetchCategories = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8080/api/categories/allCategories",
+          `${import.meta.env.VITE_APP_API_URL}/api/categories/allCategories`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -73,7 +74,7 @@ export default function AdminPanel() {
     const token = localStorage.getItem("jwtToken");
 
     try {
-      const response = await fetch("http://localhost:8080/api/categories", {
+      const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/api/categories`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -100,7 +101,7 @@ export default function AdminPanel() {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/api/categories/${id}`,
+        `${import.meta.env.VITE_APP_API_URL}/api/categories/${id}`,
         {
           method: "DELETE",
           headers: {
@@ -148,7 +149,7 @@ export default function AdminPanel() {
     const token = localStorage.getItem("jwtToken");
     try {
       const response = await fetch(
-        "http://localhost:8080/api/movie/getAllMovies",
+        `${import.meta.env.VITE_APP_API_URL}/api/movie/getAllMovies`,
         {
           method: "GET",
           headers: {
@@ -172,12 +173,12 @@ export default function AdminPanel() {
       const token = localStorage.getItem("jwtToken");
 
       if (!token) {
-        alert("No token found. Please log in");
+        toast.error("No token found. Please log in");
         return;
       }
 
       const response = await fetch(
-        `http://localhost:8080/api/movie/deleteMovie/${movieId}`,
+        `${import.meta.env.VITE_APP_API_URL}/api/movie/deleteMovie/${movieId}`,
         {
           method: "DELETE",
           headers: {
@@ -194,23 +195,23 @@ export default function AdminPanel() {
       setMovies((prevMovies) =>
         prevMovies.filter((movie) => movie.id !== movieId)
       );
-      alert("Movie deleted successfully");
+      toast.success("Movie deleted successfully");
     } catch (error) {
       console.error("Error during delete:", error);
-      alert("Failed to delete movie. Please try again later.");
+      toast.error("Failed to delete movie. Please try again later.");
     }
   };
 
   const handleGenerateReport = async () => {
     const token = localStorage.getItem("jwtToken");
     if (!token) {
-      alert("You must be logged in to generate the report.");
+      toast.error("You must be logged in to generate the report.");
       return;
     }
 
     try {
       const response = await fetch(
-        "http://localhost:8080/api/movie/generateReport",
+        `${import.meta.env.VITE_APP_API_URL}/api/movie/generateReport`,
         {
           method: "GET",
           headers: {
@@ -230,7 +231,7 @@ export default function AdminPanel() {
       link.click();
     } catch (error) {
       console.error("Error generating report:", error);
-      alert("Failed to generate report. Please try again.");
+      toast.error("Failed to generate report. Please try again.");
     }
   };
 
@@ -355,7 +356,7 @@ export default function AdminPanel() {
               </div>
               {movie.imageUrl && (
                 <img
-                  src={`http://localhost:8080${movie.imageUrl}`}
+                  src={`${import.meta.env.VITE_APP_API_URL}${movie.imageUrl}`}
                   alt={`${movie.title} Poster`}
                   className="movie-image"
                 />

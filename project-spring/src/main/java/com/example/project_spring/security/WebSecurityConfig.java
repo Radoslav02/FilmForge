@@ -4,6 +4,7 @@ import com.example.project_spring.security.jwt.JwtTokenAuthenticationFilter;
 import com.example.project_spring.security.jwt.JwtTokenProvider;
 import com.example.project_spring.service.impl.CustomUserDetailsService;
 import jakarta.servlet.Filter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -31,6 +32,9 @@ public class WebSecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
 
+    @Value("${frontend.url}")
+    private String frontendUrl;
+
     public WebSecurityConfig(JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
     }
@@ -39,27 +43,26 @@ public class WebSecurityConfig {
     public AuthenticationManager authenticationManager(HttpSecurity http, PasswordEncoder bCryptPasswordEncoder, CustomUserDetailsService userDetailService) throws Exception {
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
 
-        // Konfigurisanje UserDetailsService i PasswordEncoder bez `and()`
         authenticationManagerBuilder.userDetailsService(userDetailService).passwordEncoder(bCryptPasswordEncoder);
 
-        // Kreiranje AuthenticationManager-a
         return authenticationManagerBuilder.build();
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Isključivanje CSRF
+                .csrf(csrf -> csrf.disable())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .cors(cors -> {}) // Omogućavanje CORS-a
+                .cors(cors -> {})
                 .authorizeHttpRequests(auth ->
                         auth
                                 .requestMatchers("/", "/api/users/login").permitAll()
                                 .requestMatchers("/", "/api/users/register").permitAll()
                                 .requestMatchers("/api/users/editProfile").authenticated()
                                 .requestMatchers("/api/users/profile").authenticated()
+                                .requestMatchers("/api/users/confirm").permitAll()
                                 .requestMatchers("/api/users/verify-email").permitAll()
                                 .requestMatchers("/api/categories/allCategories").permitAll()
                                 .requestMatchers("/api/users/search").authenticated()
@@ -83,16 +86,17 @@ public class WebSecurityConfig {
                 "/api/users/login", "/api/users/register");
     }
 
-    @Bean(name = "webCorsConfigurer") // Dodeljen novi naziv beanu da izbegnemo konflikt
+    @Bean(name = "webCorsConfigurer")
     public WebMvcConfigurer webCorsConfigurer() {
+
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**") // Dozvoljava sve rute
-                        .allowedOrigins("http://localhost:5173")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Dozvoljava navedene metode
-                        .allowedHeaders("*") // Dozvoljava sve zaglavlja
-                        .allowCredentials(true); // Dozvoljava slanje kolačića
+                registry.addMapping("/**")
+                        .allowedOrigins(frontendUrl)
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
             }
         };
     }
@@ -105,15 +109,13 @@ public class WebSecurityConfig {
         }
     }
 
-    // Dodatak za omogućavanje statičkih resursa
     @Configuration
     public class StaticResourceConfig implements WebMvcConfigurer {
         @Override
         public void addResourceHandlers(ResourceHandlerRegistry registry) {
-            // Omogućava pristup fajlovima unutar 'uploads' direktorijuma
             registry.addResourceHandler("/uploads/**")
                     .addResourceLocations("file:uploads/")
-                    .setCachePeriod(3600); // Opcionalno, keširanje fajlova na sat vremena
+                    .setCachePeriod(3600);
         }
     }
 }

@@ -27,7 +27,7 @@ public class FavoriteMovies {
     @Column(name = "category_name", nullable = false)
     private String categoryName;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(
             name = "favorite_movies_movies",
             joinColumns = @JoinColumn(name = "favorite_movies_id"),

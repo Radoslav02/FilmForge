@@ -2,6 +2,7 @@ import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../Redux/store";
 import "./EditMovie.css";
+import { toast } from "react-toastify";
 
 interface Category {
   id: number;
@@ -44,7 +45,7 @@ const EditMovie: React.FC<EditMovieProps> = ({ movieId, onClose }) => {
       return;
     }
 
-    fetch(`http://localhost:8080/api/movie/${movieId}/getMovie`, {
+    fetch(`${import.meta.env.VITE_APP_API_URL}/api/movie/${movieId}/getMovie`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -76,7 +77,7 @@ const EditMovie: React.FC<EditMovieProps> = ({ movieId, onClose }) => {
       })
       .catch((error) => console.error("Error fetching movie details:", error));
 
-    fetch("http://localhost:8080/api/categories/allCategories", {
+    fetch(`${import.meta.env.VITE_APP_API_URL}/api/categories/allCategories`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -114,12 +115,12 @@ const EditMovie: React.FC<EditMovieProps> = ({ movieId, onClose }) => {
     e.preventDefault();
 
     if (!token) {
-      alert("No token found. Please log in.");
+      toast.error("No token found. Please log in.");
       return;
     }
 
     if (!user || !user.id) {
-      alert("No user information found. Please log in.");
+      toast.error("No user information found. Please log in.");
       return;
     }
 
@@ -134,7 +135,7 @@ const EditMovie: React.FC<EditMovieProps> = ({ movieId, onClose }) => {
       formData.append("image", movie.image);
     }
 
-    fetch(`http://localhost:8080/api/movie/${movieId}/edit`, {
+    fetch(`${import.meta.env.VITE_APP_API_URL}/api/movie/${movieId}/edit`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -148,12 +149,12 @@ const EditMovie: React.FC<EditMovieProps> = ({ movieId, onClose }) => {
         return response.text();
       })
       .then((message) => {
-        alert(message);
+        toast.success(message);
         onClose();
       })
       .catch((error) => {
         console.error("Error updating movie:", error);
-        alert("Failed to update movie.");
+        toast.error("Failed to update movie.");
       });
   };
 
@@ -222,7 +223,7 @@ const EditMovie: React.FC<EditMovieProps> = ({ movieId, onClose }) => {
           {movie.imageUrl && !movie.image && (
             <div className="edit-post-image-preview">
               <img
-                src={`http://localhost:8080${movie.imageUrl}`}
+                src={`${import.meta.env.VITE_APP_API_URL}${movie.imageUrl}`}
                 alt="Movie"
                 style={{ width: "200px", height: "auto" }}
                 className="edit-post-image"

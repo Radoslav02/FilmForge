@@ -60,7 +60,7 @@ public class MovieServiceImp implements MovieService {
             movie.setDescription(movieDTO.getDescription());
             movie.setReleaseDate(movieDTO.getReleaseDate());
             movie.setCategory(category);
-            movie.setUser(user); // Associating the movie with the user
+            movie.setUser(user);
             movie.setImageUrl(imageUrl);
 
             movieRepository.save(movie);
@@ -75,14 +75,11 @@ public class MovieServiceImp implements MovieService {
 
     @Override
     public List<MovieDTO> getMoviesByUserId(Long userId) {
-        // Proveri da li korisnik postoji
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Pronađi filmove povezane sa korisnikom
         List<Movie> movies = movieRepository.findByUser(user);
 
-        // Mapiraj entitete Movie u DTO-ove MovieDTO
         return movies.stream()
                 .map(movie -> new MovieDTO(
                         movie.getId(),
@@ -92,7 +89,7 @@ public class MovieServiceImp implements MovieService {
                        movie.getDescription(),
                         movie.getCategory().getId(),
                         movie.getImageUrl(),
-                        movie.getCategory().getName()// Dodaj naziv kategorije umesto ID-a
+                        movie.getCategory().getName()
                 ))
                 .collect(Collectors.toList());
     }
@@ -136,58 +133,47 @@ public class MovieServiceImp implements MovieService {
 
     @Transactional
     public void addGradeToMovie(Long movieId, Long userId, int value) {
-        // Proveri da li film postoji
         Movie movie = movieRepository.findById(movieId)
                 .orElseThrow(() -> new ResourceNotFoundException("Movie not found with id: " + movieId));
 
-        // Proveri da li korisnik postoji
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 
-        // Pronađi postojeću ocenu korisnika za film
         Optional<Grade> existingGrade = movie.getGrades().stream()
                 .filter(grade -> grade.getUser().getId().equals(userId))
                 .findFirst();
 
         if (existingGrade.isPresent()) {
-            // Ažuriraj postojeću ocenu
             Grade grade = existingGrade.get();
             grade.setValue(value);
         } else {
-            // Kreiraj novu ocenu
             Grade grade = new Grade(user, movie, value);
-            movie.getGrades().add(grade); // Poveži ocenu sa filmom
+            movie.getGrades().add(grade);
         }
 
-        // Sačuvaj izmene
         movieRepository.save(movie);
     }
 
     @Transactional
     public Comment addComment(Long movieId, Long userId, String text) {
-        // Retrieve the movie and user objects
         Movie movie = movieRepository.findById(movieId)
                 .orElseThrow(() -> new RuntimeException("Movie not found"));
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Create a new comment
         Comment comment = new Comment();
         comment.setContent(text);
         comment.setMovie(movie);
         comment.setUser(user);
 
-        // Save the comment
         commentRepository.save(comment);
 
-        // Add the comment to the movie's comments list (this will be persisted automatically)
         movie.getComments().add(comment);
 
-        // Save the movie (not necessary to explicitly save movie if it's already managed)
         movieRepository.save(movie);
 
-        return comment;  // Return the saved comment object
+        return comment;
     }
 
     @Transactional
@@ -269,20 +255,17 @@ public class MovieServiceImp implements MovieService {
     @Transactional
     public JasperPrint generateTop10MoviesReport() {
         try {
-            // Učitaj i kompajliraj .jrxml fajl
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream("jasperreports/MoviesReport.jrxml");
             if (inputStream == null) {
                 throw new FileNotFoundException("Report template 'MoviesReport.jrxml' not found.");
             }
             JasperReport jasperReport = JasperCompileManager.compileReport(inputStream);
 
-            // Pripremi podatke
             List<Movie> movies = movieRepository.findAll();
             if (movies.isEmpty()) {
                 throw new RuntimeException("No movies found in the database.");
             }
 
-            // Izaberi 10 najbolje ocenjenih filmova
             List<MovieDTO> topMovies = movies.stream()
                     .sorted(Comparator.comparingDouble(Movie::getAverageGrade).reversed())
                     .limit(10)
@@ -299,15 +282,10 @@ public class MovieServiceImp implements MovieService {
                 throw new RuntimeException("No top movies to include in the report.");
             }
 
-
-
-            // Pripremi DataSource
             JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(topMovies);
 
-            // Parametri izveštaja
             Map<String, Object> parameters = new HashMap<>();
 
-            // Popuni izveštaj podacima
             return JasperFillManager.fillReport(jasperReport, parameters, dataSource);
         } catch (Exception e) {
             e.printStackTrace();

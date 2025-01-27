@@ -18,7 +18,7 @@ const ShowFriendRequests = () => {
           throw new Error("You need to be logged in to view requests.");
         }
 
-        const response = await fetch(`http://localhost:8080/api/requests/received/${userId}`, {
+        const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/api/requests/received/${userId}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -36,7 +36,7 @@ const ShowFriendRequests = () => {
         const sortedRequests = data.sort((a: any, b: any) => {
           const dateA = new Date(a.requestDate);
           const dateB = new Date(b.requestDate);
-          return dateB.getTime() - dateA.getTime(); // descending order
+          return dateB.getTime() - dateA.getTime(); 
         });
   
         setReceivedRequests(sortedRequests);
@@ -55,7 +55,7 @@ const ShowFriendRequests = () => {
       const token = localStorage.getItem("jwtToken");
       if (!token) throw new Error("You need to be logged in to accept requests.");
 
-      const response = await fetch(`http://localhost:8080/api/requests/accept/${requestId}`, {
+      const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/api/requests/accept/${requestId}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -82,7 +82,7 @@ const ShowFriendRequests = () => {
       const token = localStorage.getItem("jwtToken");
       if (!token) throw new Error("You need to be logged in to decline requests.");
 
-      const response = await fetch(`http://localhost:8080/api/requests/decline/${requestId}`, {
+      const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/api/requests/decline/${requestId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

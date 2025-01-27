@@ -50,8 +50,6 @@ public class FriendRequestController {
                 .collect(Collectors.toList());
     }
 
-
-
     @DeleteMapping("/delete/{requestId}")
     public void deleteFriendRequest(@PathVariable Long requestId) {
         friendRequestService.deleteFriendRequest(requestId);
@@ -69,6 +67,4 @@ public class FriendRequestController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-
-
 }

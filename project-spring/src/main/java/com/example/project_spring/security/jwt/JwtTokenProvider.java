@@ -34,7 +34,7 @@ public class JwtTokenProvider {
             secretKey = Keys.hmacShaKeyFor(jwtProperties.getSecretKey().getBytes());
         } catch (Exception e) {
             System.err.println("Error initializing secret key: " + e.getMessage());
-            throw e; // Propagiranje greške za detaljnu analizu
+            throw e;
         }
     }
 
@@ -56,8 +56,8 @@ public class JwtTokenProvider {
     }
 
     public Authentication getAuthentication(String token) {
-        String username = getUsername(token); // This now returns the username
-        UserDetails userDetails = this.userDetailsService.loadUserByUsername(username); // Fetch user by username
+        String username = getUsername(token);
+        UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 

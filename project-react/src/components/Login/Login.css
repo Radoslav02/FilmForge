@@ -22,9 +22,12 @@
     flex-direction: column;
 }
 
+.login-form label{
+    font-weight: bold;
+}
+
 .register-form{
     cursor: pointer;
-    font-weight: bold;
     display: flex;
 }
 
@@ -60,4 +63,9 @@
 
 .dont{
     color: white;
+    font-size: 15px;
+}
+
+.create-p{
+    font-size: 15px;
 }
