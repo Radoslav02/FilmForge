@@ -46,7 +46,7 @@ export default function Header() {
   return (
     <div className="header-container">
       <div className="logo-wrapper" onClick={() => navigate("/home")}>
-        <h1 className="logo">FilmForge</h1>
+        <h1 className="logo">CriticCafé</h1>
       </div>
       <div className="search-wrapper">
         <UserSearch />
